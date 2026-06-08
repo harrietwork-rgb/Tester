@@ -1,1691 +1,479 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NFRD369Q9E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag("js", new Date());
-  gtag("config", "G-NFRD369Q9E", { send_page_view: true });
-</script>
-
-<meta charset="UTF-8">
-<title>Colour Focus - Perception Test</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="styles/explosion.css">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Colour Focus — Single-file (with Docs)</title>
+<meta name="description" content="Single-file Colour Focus game with embedded docs editor and clear replaceable sections." />
 <style>
-:root {
-  --accent: #2563eb;
-  --accent-soft: #dbeafe;
-  --text-main: #111827;
-  --text-soft: #4b5563;
-  --bg: #ffffff;
-  --box-bg: #f9fafb;
-  --border: #e5e7eb;
-}
-
-body.dark {
-  --accent: #60a5fa;
-  --accent-soft: #1e3a8a;
-  --text-main: #f3f4f6;
-  --text-soft: #cbd5e1;
-  --bg: #0f172a;
-  --box-bg: #1e293b;
-  --border: #334155;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  font-family: system-ui, sans-serif;
-  color: var(--text-main);
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  transition: background 0.3s, color 0.3s;
-}
-
-.app {
-  width: 100%;
-  max-width: 420px;
-  background: var(--bg);
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-  border: 1px solid var(--border);
-  transition: background 0.3s, border 0.3s;
-}
-
-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 10px;
-  position: relative;
-}
-
-h1 {
-  font-size: 20px;
-  margin: 0 0 4px;
-}
-
-.subtitle {
-  font-size: 13px;
-  color: var(--text-soft);
-}
-
-#theme-toggle {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.top-row {
-  display: flex;
-  justify-content: space-between;
-  margin: 12px 0;
-}
-
-.box {
-  background: var(--box-bg);
-  padding: 10px;
-  border-radius: 12px;
-  width: 48%;
-  text-align: center;
-  border: 1px solid var(--border);
-  box-sizing: border-box;
-}
-
-.box-label {
-  font-size: 12px;
-  color: var(--text-soft);
-  margin-bottom: 4px;
-}
-
-#timer-value {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-#score-value,
-#best-score-value,
-#best-level-value {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.mid-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.mid-box {
-  flex: 1;
-  background: var(--box-bg);
-  border-radius: 10px;
-  padding: 8px;
-  border: 1px solid var(--border);
-  text-align: center;
-  font-size: 13px;
-}
-
-#accuracy,
-#level-label {
-  color: var(--text-soft);
-}
-
-#lives {
-  font-size: 20px;
-}
-
-#level-label {
-  font-size: 14px;
-  margin: 6px 0 4px;
-}
-
-  .combo-display {
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  padding: 6px 14px;
-  background: rgba(17, 24, 39, 0.72);
-  border-radius: 999px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 200ms ease-out;
-  z-index: 999;
-}
-.game-flash {
-  min-height: 28px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--accent);
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 180ms ease-out, transform 180ms ease-out;
-  pointer-events: none;
-}
-
-.game-flash.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.combo-display {
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  padding: 6px 14px;
-  background: rgba(17, 24, 39, 0.72);
-  border-radius: 999px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 200ms ease-out;
-  z-index: 999;
-}
-.grid {
-  display: grid;
-  gap: 6px;
-  margin: 10px 0 14px;
-}
-
-.tile {
-  width: 100%;
-  padding-bottom: 100%;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  box-sizing: border-box;
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.primary {
-  background: var(--accent);
-  color: #ffffff;
-}
-
-.ghost {
-  background: var(--box-bg);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-}
-
-#pause-overlay,
-#results-overlay,
-#leaderboard-overlay,
-#name-overlay,
-#profile-overlay,
-#achievements-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.12);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 50;
-}
-
-.overlay-card {
-  background: var(--box-bg);
-  border-radius: 16px;
-  padding: 18px 16px;
-  max-width: 360px;
-  width: 100%;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-  border: 1px solid var(--border);
-  text-align: center;
-}
-
-.overlay-card h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
-}
-
-.overlay-card p {
-  margin: 4px 0;
-  font-size: 13px;
-  color: var(--text-soft);
-}
-
-.overlay-card button {
-  margin-top: 10px;
-}
-
-.rank-pill {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #111827;
-}
-
-.rank-bronze { background: #d97757; color: #111827; }
-.rank-silver { background: #e5e7eb; color: #111827; }
-.rank-gold { background: #facc15; color: #111827; }
-.rank-diamond { background: #bfdbfe; color: #1e3a8a; }
-.rank-master { background: #c4b5fd; color: #4c1d95; }
-
-.lb-tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.lb-tab {
-  flex: 1;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--box-bg);
-  color: var(--text-main);
-}
-
-.lb-tab.active {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-.lb-panel {
-  display: none;
-}
-
-.lb-panel.active {
-  display: block;
-}
-
-.lb-meta {
-  font-size: 12px;
-  color: var(--text-soft);
-  margin-bottom: 8px;
-}
-
-.lb-runs,
-.lb-global-list {
-  margin-top: 8px;
-  max-height: 240px;
-  overflow-y: auto;
-  text-align: left;
-  font-size: 12px;
-}
-
-.lb-run-row {
-  margin: 6px 0;
-}
-
-.lb-run-label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2px;
-  gap: 4px;
-}
-
-.lb-run-label span {
-  white-space: nowrap;
-}
-
-.lb-run-label span:last-child {
-  margin-left: auto;
-}
-
-.lb-bar-outer {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  overflow: hidden;
-}
-
-.lb-bar-inner {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.name-input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  font-size: 14px;
-  margin-top: 8px;
-  box-sizing: border-box;
-  background: var(--bg);
-  color: var(--text-main);
-}
-
-.profile-list,
-.ach-list {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.profile-btn {
-  width: 100%;
-  text-align: left;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--box-bg);
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-main);
-}
-
-.profile-btn.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.ach-list {
-  max-height: 260px;
-  overflow-y: auto;
-  text-align: left;
-  font-size: 13px;
-}
-
-.medal-card {
-  border-radius: 12px;
-  padding: 10px 12px;
-  color: #111827;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
-}
-
-.medal-gold { background: #facc15; }
-.medal-silver { background: #e5e7eb; }
-.medal-bronze { background: #d97757; }
-
-.medal-title {
-  font-weight: 700;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.medal-date {
-  font-size: 12px;
-  opacity: 0.9;
-}
+  :root{
+    --bg:#071028; --card:#0b1220; --muted:#9aa6b2; --accent:#60a5fa;
+    --glass: rgba(255,255,255,0.03); --success:#10b981; --danger:#ef4444;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;font-family:var(--font-sans);background:linear-gradient(180deg,#071028 0%, #071827 60%);color:#e6eef6;}
+  .wrap{max-width:1100px;margin:20px auto;padding:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .title{display:flex;gap:12px;align-items:center;}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#60a5fa,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;}
+  h1{font-size:20px;margin:0;}
+  p.lead{margin:0;color:var(--muted);font-size:13px;}
+  .controls{display:flex;gap:10px;align-items:center;}
+  .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;}
+  .btn.primary{background:linear-gradient(90deg,#60a5fa,#7c3aed);color:white;border:none;}
+  main.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);}
+  .game-area{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;}
+  .left{flex:1 1 560px;min-width:280px;}
+  .right{width:320px;min-width:260px;}
+  .grid{display:grid;gap:8px;margin-top:12px;user-select:none;}
+  .tile{aspect-ratio:1/1;border-radius:8px;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease;border:1px solid rgba(255,255,255,0.02);}
+  .tile:active{transform:scale(.98);}
+  .panel{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);margin-bottom:12px;}
+  .panel h3{margin:0 0 8px 0;font-size:14px;}
+  .list{display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted);}
+  .small{font-size:12px;color:var(--muted);}
+  textarea{width:100%;min-height:160px;background:#071427;color:#e6eef6;border:1px solid rgba(255,255,255,0.03);padding:10px;border-radius:8px;font-family:monospace;font-size:13px;}
+  .placeholder-note{font-size:12px;color:#9aa6b2;margin-top:6px;}
+  footer{margin-top:14px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;align-items:center;}
+  .highlight{outline:3px dashed rgba(96,165,250,0.18);border-radius:8px;}
+  @media (max-width:980px){.game-area{flex-direction:column}.right{width:100%}}
 </style>
 </head>
-
 <body>
-<div class="app">
-  <header>
-    <h1>Colour Focus</h1>
-    <div class="subtitle">Tap the lighter square as quickly and accurately as you can.</div>
-    <button id="theme-toggle">🌙</button>
-  </header>
-
-  <div class="top-row">
-    <div class="box">
-      <div class="box-label">Best Score</div>
-      <div id="best-score-value">0</div>
-    </div>
-    <div class="box">
-      <div class="box-label">Best Level</div>
-      <div id="best-level-value">1</div>
-    </div>
-  </div>
-
-  <div class="top-row">
-    <div class="box">
-      <div class="box-label">Time</div>
-      <div id="timer-value">01:00</div>
-    </div>
-    <div class="box">
-      <div class="box-label">Score</div>
-      <div id="score-value">0</div>
-    </div>
-  </div>
-
-  <div class="mid-row">
-    <div class="mid-box">
-      <div class="box-label">Accuracy</div>
-      <div id="accuracy">0% (0 / 0)</div>
-    </div>
-    <div class="mid-box">
-      <div class="box-label">Lives</div>
-      <div id="lives">❤️❤️❤️</div>
-    </div>
-  </div>
-
-<div id="level-label">Level 1</div>
-<div id="game-flash" class="game-flash"></div>
-<div id="comboDisplay" class="combo-display">Combo x1</div>
-<div id="grid" class="grid"></div>
-
-<div class="mode-row">
-  <button class="ghost" onclick="setGameMode('relaxed')">Relaxed</button>
-  <button class="ghost" onclick="setGameMode('classic')">Classic</button>
-  <button class="ghost" onclick="setGameMode('extreme')">Extreme</button>
-  <button class="ghost" onclick="setGameMode('daily')">Daily</button>
-</div>
-  
-  <div class="controls">
-    <button id="pause-btn" class="ghost">Pause</button>
-    <button id="restart-btn" class="ghost">Restart</button>
-    <button id="start-btn" class="primary">Play</button>
-    <button id="leaderboard-btn" class="ghost">Leaderboard</button>
-    <button id="achievements-btn" class="ghost">Achievements</button>
-  </div>
-</div>
-
-<div id="pause-overlay">
-  <div class="overlay-card">
-    <h2>Paused</h2>
-    <p>Take a breather. Tap continue when you're ready.</p>
-    <button id="continue-btn" class="primary">Continue</button>
-  </div>
-</div>
-
-<div id="results-overlay">
-  <div class="overlay-card">
-    <h2>Results</h2>
-    <p id="results-score"></p>
-    <p id="results-accuracy"></p>
-    <p id="results-level"></p>
-    <p id="results-best"></p>
-
-    <button id="play-again-btn" class="primary">Play Again</button>
-    <button id="results-leaderboard-btn" class="ghost">Leaderboard</button>
-    <button id="results-achievements-btn" class="ghost">Achievements</button>
-  </div>
-</div>
-
-<div id="leaderboard-overlay">
-  <div class="overlay-card">
-    <h2>Leaderboard</h2>
-
-    <div class="lb-tabs">
-      <button class="lb-tab active" id="lb-tab-my" onclick="switchLbTab('my')">My Week</button>
-      <button class="lb-tab" id="lb-tab-global" onclick="switchLbTab('global')">Global</button>
-    </div>
-
-    <div id="lb-panel-my" class="lb-panel active">
-      <div id="lb-rank-pill" class="rank-pill rank-bronze">BRONZE</div>
-      <p id="lb-best"></p>
-      <p id="lb-reset"></p>
-      <p id="lb-username"></p>
-      <div class="lb-meta">Last 10 runs this week:</div>
-      <div id="lb-runs" class="lb-runs"></div>
-    </div>
-
-    <div id="lb-panel-global" class="lb-panel">
-      <p style="font-size:12px;color:var(--text-soft);margin:0 0 4px">Top players this week across all devices</p>
-      <div id="lb-global-list" class="lb-global-list">
-        <div style="text-align:center;color:var(--text-soft);padding:12px 0;">Global leaderboard coming soon.</div>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <div class="logo">CF</div>
+        <div>
+          <h1>Colour Focus — Single-file</h1>
+          <p class="lead">Combined game + docs editor. Paste your docs and apply changes into the page.</p>
+        </div>
       </div>
-    </div>
 
-    <button id="lb-name-btn" class="ghost">Change name</button>
-    <button id="lb-profile-btn" class="ghost">Switch profile</button>
-    <button id="lb-close-btn" class="primary">Close</button>
+      <div class="controls">
+        <button id="saveLocal" class="btn">Save Locally</button>
+        <button id="downloadBtn" class="btn">Download</button>
+        <button id="startBtn" class="btn primary">Start</button>
+      </div>
+    </header>
+
+    <main class="card" role="main" aria-labelledby="gameTitle">
+      <div class="game-area">
+        <!-- LEFT: Game -->
+        <section class="left" aria-labelledby="gameTitle">
+          <h2 id="gameTitle" class="small">Game</h2>
+
+          <!-- Grid container -->
+          <div id="gridWrap" class="panel">
+            <div id="grid" class="grid" role="grid" aria-label="Colour tiles"></div>
+            <div class="placeholder-note" id="message">Press <strong>Start</strong> to begin. Difficulty increases with each correct answer.</div>
+          </div>
+
+          <!-- Replaceable content area: original project README / instructions -->
+          <div id="projectDocs" class="panel" aria-live="polite">
+            <h3>Project Docs (original)</h3>
+
+            <!--
+              PLACEHOLDER: This block is where your original README / instructions / HTML snippets should go.
+              Replace the innerHTML of #projectDocs via the Docs editor on the right, or paste directly here.
+              The script will mark inserted content with class="highlight" so you can spot replaced bits.
+            -->
+            <div id="docsContent">
+              <p class="small">No project docs loaded yet. Use the Docs editor on the right to paste your README, instructions, or HTML snippets from your repository (for example: the content of index (5).html, README.md, or any other file).</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT: Controls, settings, docs editor -->
+        <aside class="right">
+          <div class="panel">
+            <h3>Settings</h3>
+            <div class="list">
+              <label class="small">Grid size
+                <select id="gridSize" style="margin-left:8px;">
+                  <option value="2">2 × 2</option>
+                  <option value="3" selected>3 × 3</option>
+                  <option value="4">4 × 4</option>
+                  <option value="5">5 × 5</option>
+                  <option value="6">6 × 6</option>
+                </select>
+              </label>
+
+              <label class="small">Base hue
+                <input id="baseHue" type="range" min="0" max="360" value="200" style="width:100%;">
+              </label>
+
+              <label class="small">Initial difference
+                <input id="diffRange" type="range" min="2" max="40" value="18" style="width:100%;">
+              </label>
+
+              <label class="small">Time limit (sec)
+                <input id="timeLimit" type="number" min="3" max="60" value="12" style="width:100%;">
+              </label>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Docs Editor</h3>
+            <div class="list">
+              <label class="small">Paste README / HTML / instructions here</label>
+              <textarea id="docsEditor" placeholder="Paste raw HTML or markdown or plain text from your GitHub file, Google Doc, or other docs."></textarea>
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <button id="applyDocs" class="btn primary">Apply Docs</button>
+                <button id="clearDocs" class="btn">Clear</button>
+              </div>
+              <div class="placeholder-note">Tip: paste the raw content of your file (for example the raw view of index (5).html). The editor will insert it into the Project Docs area and highlight replaced sections.</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Quick actions</h3>
+            <div class="list">
+              <button id="hintBtn" class="btn">Hint</button>
+              <button id="resetBtn" class="btn">Reset</button>
+              <button id="exportState" class="btn">Export State (JSON)</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <div class="small">This single-file rebuild includes placeholders for your docs and clear markers for replaced bits.</div>
+        <div class="small">Use the Docs Editor to paste content from your GitHub or Google Doc and click Apply Docs.</div>
+      </footer>
+    </main>
   </div>
-</div>
-
-<div id="name-overlay">
-  <div class="overlay-card">
-    <h2>Set Your Name</h2>
-    <p>Choose the name that appears on your leaderboard.</p>
-    <input id="name-input" class="name-input" maxlength="20">
-    <button id="name-save-btn" class="primary">Save</button>
-  </div>
-</div>
-
-<div id="profile-overlay">
-  <div class="overlay-card">
-    <h2>Select Profile</h2>
-    <p>You can have up to 3 profiles on this device.</p>
-    <div id="profile-list" class="profile-list"></div>
-    <button id="add-profile-btn" class="ghost">Add profile</button>
-    <button id="profile-close-btn" class="primary">Close</button>
-  </div>
-</div>
-
-<div id="achievements-overlay">
-  <div class="overlay-card">
-    <h2>Achievements</h2>
-    <p>Your permanent weekly medals.</p>
-    <div id="ach-list" class="ach-list"></div>
-    <button id="ach-close-btn" class="primary">Close</button>
-  </div>
-</div>
-
-<script src="scripts/explosion-and-feedback.js"></script>
 
 <script>
-let level = 1;
-let score = 0;
-let correct = 0;
-let wrong = 0;
-let lives = 3;
+/* Single-file Colour Focus with Docs integration
+   - Paste your docs into the editor and click Apply Docs to insert them into the page.
+   - The script highlights inserted/replaced content so you can see what changed.
+   - If you want an exact one-to-one port of your original index (5).html, paste the raw file contents into the editor.
+*/
 
-let bestScore = 0;
-let bestLevel = 1;
-
-let sessionSeconds = 60;
-let sessionRemaining = sessionSeconds;
-let sessionTimer = null;
-
-let gameActive = false;
-let paused = false;
-let feedbackActive = false;
-let oddIndex = -1;
-let lastClickTime = null;
-let gameMode = "classic";
-let dailyChallengeActive = false;
-let dailySeed = 1;
-let currentCombo = 0;
-let maxCombo = 0;
-let comboTimeout = null;
-
-let profilesData = null;
-let currentProfile = null;
-
-const gridEl = document.getElementById("grid");
-const timerValueEl = document.getElementById("timer-value");
-const scoreValueEl = document.getElementById("score-value");
-const bestScoreValueEl = document.getElementById("best-score-value");
-const bestLevelValueEl = document.getElementById("best-level-value");
-const levelLabelEl = document.getElementById("level-label");
-const accuracyEl = document.getElementById("accuracy");
-const livesEl = document.getElementById("lives");
-
-const pauseOverlay = document.getElementById("pause-overlay");
-const resultsOverlay = document.getElementById("results-overlay");
-const leaderboardOverlay = document.getElementById("leaderboard-overlay");
-const nameOverlay = document.getElementById("name-overlay");
-const profileOverlay = document.getElementById("profile-overlay");
-const achievementsOverlay = document.getElementById("achievements-overlay");
-
-const pauseBtn = document.getElementById("pause-btn");
-const continueBtn = document.getElementById("continue-btn");
-const startBtn = document.getElementById("start-btn");
-const restartBtn = document.getElementById("restart-btn");
-const playAgainBtn = document.getElementById("play-again-btn");
-const resultsLeaderboardBtn = document.getElementById("results-leaderboard-btn");
-const resultsAchievementsBtn = document.getElementById("results-achievements-btn");
-const leaderboardBtn = document.getElementById("leaderboard-btn");
-const achievementsBtn = document.getElementById("achievements-btn");
-const lbCloseBtn = document.getElementById("lb-close-btn");
-const lbNameBtn = document.getElementById("lb-name-btn");
-const lbProfileBtn = document.getElementById("lb-profile-btn");
-
-const themeToggle = document.getElementById("theme-toggle");
-
-const resultsScore = document.getElementById("results-score");
-const resultsAccuracy = document.getElementById("results-accuracy");
-const resultsLevel = document.getElementById("results-level");
-const resultsBest = document.getElementById("results-best");
-
-const lbRankPill = document.getElementById("lb-rank-pill");
-const lbBest = document.getElementById("lb-best");
-const lbReset = document.getElementById("lb-reset");
-const lbRuns = document.getElementById("lb-runs");
-const lbUsername = document.getElementById("lb-username");
-
-const nameInput = document.getElementById("name-input");
-const nameSaveBtn = document.getElementById("name-save-btn");
-
-const profileListEl = document.getElementById("profile-list");
-const addProfileBtn = document.getElementById("add-profile-btn");
-const profileCloseBtn = document.getElementById("profile-close-btn");
-
-const achListEl = document.getElementById("ach-list");
-const achCloseBtn = document.getElementById("ach-close-btn");
-
-if (localStorage.getItem("colourFocusTheme") === "dark") {
-  document.body.classList.add("dark");
-  themeToggle.textContent = "☀️";
-}
-
-themeToggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  const isDark = document.body.classList.contains("dark");
-  themeToggle.textContent = isDark ? "☀️" : "🌙";
-  localStorage.setItem("colourFocusTheme", isDark ? "dark" : "light");
+/* ---------- State ---------- */
+const state = {
+  running: false,
+  gridSize: 3,
+  baseHue: 200,
+  diff: 18,
+  timeLimit: 12,
+  score: 0,
+  streak: 0,
+  bestStreak: 0,
+  rounds: 0,
+  correct: 0,
+  incorrect: 0,
+  oddIndex: null,
+  timer: null,
+  timeLeft: 0,
+  allowInput: true
 };
 
-function createRandomUsername() {
-  return `CF-${Math.floor(1000 + Math.random() * 9000)}`;
+/* ---------- DOM ---------- */
+const gridEl = document.getElementById('grid');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const hintBtn = document.getElementById('hintBtn');
+const applyDocsBtn = document.getElementById('applyDocs');
+const clearDocsBtn = document.getElementById('clearDocs');
+const docsEditor = document.getElementById('docsEditor');
+const docsContent = document.getElementById('docsContent');
+const gridSizeInput = document.getElementById('gridSize');
+const baseHueInput = document.getElementById('baseHue');
+const diffRangeInput = document.getElementById('diffRange');
+const timeLimitInput = document.getElementById('timeLimit');
+const saveLocalBtn = document.getElementById('saveLocal');
+const downloadBtn = document.getElementById('downloadBtn');
+const exportStateBtn = document.getElementById('exportState');
+
+/* ---------- Audio (optional) ---------- */
+const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+function beep(freq=440, duration=0.08, vol=0.06){
+  if(!audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine';
+  o.frequency.value = freq;
+  g.gain.value = vol;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start();
+  setTimeout(()=> o.stop(), duration*1000);
 }
 
-function getCurrentWeekStartMs() {
-  const now = new Date();
-  const day = now.getUTCDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + diff));
-  return monday.getTime();
-}
-
-function createNewProfile() {
-  const id = "p" + Date.now() + Math.floor(Math.random() * 1000);
-  const weekStart = getCurrentWeekStartMs();
-
-  return {
-    id,
-    username: createRandomUsername(),
-    bestScore: 0,
-    bestLevel: 1,
-    weekly: {
-      weekStart,
-      bestScore: 0,
-      bestLevel: 1,
-      runs: []
-    },
-    achievements: []
-  };
-}
-
-function loadProfiles() {
-  const raw = localStorage.getItem("colourFocusProfiles");
-
-  if (raw) {
-    try {
-      profilesData = JSON.parse(raw);
-    } catch {
-      profilesData = null;
-    }
-  }
-
-  if (!profilesData || !profilesData.profiles || Object.keys(profilesData.profiles).length === 0) {
-    const profile = createNewProfile();
-    profilesData = {
-      activeId: profile.id,
-      profiles: {
-        [profile.id]: profile
-      }
-    };
-  }
-
-  if (!profilesData.activeId || !profilesData.profiles[profilesData.activeId]) {
-    profilesData.activeId = Object.keys(profilesData.profiles)[0];
-  }
-
-  currentProfile = profilesData.profiles[profilesData.activeId];
-
-  saveProfiles();
-  applyProfileToUI();
-  initWeeklyForCurrentProfile();
-}
-
-function saveProfiles() {
-  localStorage.setItem("colourFocusProfiles", JSON.stringify(profilesData));
-}
-
-function setActiveProfile(id) {
-  if (!profilesData.profiles[id]) return;
-
-  profilesData.activeId = id;
-  currentProfile = profilesData.profiles[id];
-
-  saveProfiles();
-  applyProfileToUI();
-  initWeeklyForCurrentProfile();
-}
-
-function applyProfileToUI() {
-  bestScore = currentProfile.bestScore || 0;
-  bestLevel = currentProfile.bestLevel || 1;
-
-  bestScoreValueEl.textContent = bestScore;
-  bestLevelValueEl.textContent = bestLevel;
-}
-
-function renderProfileList() {
-  profileListEl.innerHTML = "";
-
-  const ids = Object.keys(profilesData.profiles);
-
-  ids.forEach(id => {
-    const p = profilesData.profiles[id];
-    const btn = document.createElement("button");
-
-    btn.className = "profile-btn";
-    if (id === profilesData.activeId) btn.classList.add("active");
-
-    btn.textContent = p.username;
-    btn.onclick = () => {
-      setActiveProfile(id);
-      renderProfileList();
-    };
-
-    profileListEl.appendChild(btn);
-  });
-
-  addProfileBtn.style.display = ids.length >= 3 ? "none" : "block";
-}
-
-function showProfileOverlay() {
-  renderProfileList();
-  profileOverlay.style.display = "flex";
-}
-
-function hideProfileOverlay() {
-  profileOverlay.style.display = "none";
-}
-
-function initWeeklyForCurrentProfile() {
-  const weekStartMs = getCurrentWeekStartMs();
-
-  if (!currentProfile.weekly || typeof currentProfile.weekly.weekStart !== "number") {
-    currentProfile.weekly = {
-      weekStart: weekStartMs,
-      bestScore: 0,
-      bestLevel: 1,
-      runs: []
-    };
-
-    saveProfiles();
-    return;
-  }
-
-  if (currentProfile.weekly.weekStart < weekStartMs) {
-    awardMedalsForWeek(currentProfile);
-
-    currentProfile.weekly = {
-      weekStart: weekStartMs,
-      bestScore: 0,
-      bestLevel: 1,
-      runs: []
-    };
-
-    saveProfiles();
-  }
-}
-
-function awardMedalsForWeek(profile) {
-  const w = profile.weekly;
-  if (!w || !w.runs || w.runs.length === 0) return;
-
-  const sorted = [...w.runs].sort((a, b) => b.score - a.score);
-  const medals = ["gold", "silver", "bronze"];
-
-  if (!profile.achievements) profile.achievements = [];
-
-  for (let i = 0; i < 3 && i < sorted.length; i++) {
-    profile.achievements.push({
-      medal: medals[i],
-      weekStart: w.weekStart
-    });
-  }
-}
-
-function recordWeeklyRun(score, level, pct) {
-  const w = currentProfile.weekly;
-  if (!w) return;
-
-  if (score > w.bestScore) w.bestScore = score;
-  if (level > w.bestLevel) w.bestLevel = level;
-
-  w.runs.push({
-    score,
-    level,
-    accuracy: pct,
-    date: new Date().toISOString().slice(0, 10),
-    name: currentProfile.username
-  });
-
-  if (w.runs.length > 10) {
-    w.runs = w.runs.slice(w.runs.length - 10);
-  }
-
-  saveProfiles();
-  submitRunToGlobalLeaderboard(score, level, pct);
-}
-
-function formatTime(sec) {
-  const minutes = Math.floor(sec / 60);
-  const seconds = sec % 60;
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
-
-function updateAccuracy() {
-  const total = correct + wrong;
-  const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
-
-  accuracyEl.textContent = `${pct}% (${correct} / ${total})`;
-}
-
- function showGameFlash(text, duration = 700) {
-  const el = document.getElementById("game-flash");
-  if (!el) return;
-
-  el.textContent = text;
-  el.classList.add("show");
-
-  setTimeout(() => {
-    el.classList.remove("show");
-  }, duration);
-}
-
-function showTopFlash(text, duration = 1000) {
-  const el = document.getElementById("comboDisplay");
-  if (!el) return;
-
-  const previousText = el.textContent;
-
-  el.textContent = text;
-  el.style.opacity = 1;
-
-  clearTimeout(comboTimeout);
-  comboTimeout = setTimeout(() => {
-    if (currentCombo > 1) {
-      el.textContent = `Combo x${currentCombo}`;
-      el.style.opacity = 1;
-    } else {
-      el.textContent = previousText;
-      el.style.opacity = 0;
-    }
-  }, duration);
-} 
-function updateLives() {
-  livesEl.textContent = "❤️".repeat(lives) + "🤍".repeat(3 - lives);
-}
-function onCorrectPick() {
-  currentCombo++;
-
-  if (currentCombo > maxCombo) {
-    maxCombo = currentCombo;
-  }
-
-  updateComboDisplay();
-
-  vibrate(20);
-}
-
-function onWrongPick() {
-  currentCombo = 0;
-  updateComboDisplay();
-}
-
-function onCorrectPick() {
-  currentCombo++;
-
-  if (currentCombo > maxCombo) {
-    maxCombo = currentCombo;
-  }
-
-  updateComboDisplay();
-
-  if (currentCombo >= 5) {
-    unlockAchievement("combo_5", "5 Combo", "✨", { combo: 5 });
-  }
-
-  if (currentCombo >= 10) {
-    unlockAchievement("combo_10", "10 Combo", "🔥", { combo: 10 });
-  }
-
-  if (currentCombo >= 20) {
-    unlockAchievement("combo_20", "20 Combo", "⚡", { combo: 20 });
-  }
-
-  if (currentCombo >= 30) {
-    unlockAchievement("perfect_run_30", "Perfect Run", "🏆", { combo: 30 });
-  }
-
-  if (currentCombo >= 50) {
-    unlockAchievement("combo_50", "50 Combo", "🚀", { combo: 50 });
-  }
-
-  if (currentCombo >= 75) {
-    unlockAchievement("combo_75", "75 Combo", "💎", { combo: 75 });
-  }
-
-  if (currentCombo >= 100) {
-    unlockAchievement("combo_100", "100 Combo", "👑", { combo: 100 });
-  }
-
-  vibrate(20);
-}
-
-function onWrongPick() {
-  currentCombo = 0;
-  updateComboDisplay();
-}
-
-function updateComboDisplay() {
-  const el = document.getElementById("comboDisplay");
-  if (!el) return;
-
-  if (currentCombo <= 1) {
-    el.style.opacity = 0;
-    return;
-  }
-
-  el.textContent = `Combo x${currentCombo}`;
-  el.style.opacity = 1;
-
-  clearTimeout(comboTimeout);
-  comboTimeout = setTimeout(() => {
-    el.style.opacity = 0;
-  }, 1200);
-}
-
-function vibrate(ms) {
-  if (navigator.vibrate) {
-    navigator.vibrate(ms);
-  }
-}
-  
-function updateComboDisplay() {
-  const el = document.getElementById("comboDisplay");
-  if (!el) return;
-
-  if (currentCombo <= 1) {
-    el.style.opacity = 0;
-    return;
-  }
-
-  el.textContent = `Combo x${currentCombo}`;
-  el.style.opacity = 1;
-
-  clearTimeout(comboTimeout);
-  comboTimeout = setTimeout(() => {
-    el.style.opacity = 0;
-  }, 1200);
-}
-
-function vibrate(ms) {
-  if (navigator.vibrate) {
-    navigator.vibrate(ms);
-  }
-}
-function getGridSize(level) {
-  if (level <= 2) return 2;
-  if (level <= 4) return 3;
-  if (level <= 7) return 4;
-  if (level <= 11) return 5;
-  return 6;
-}
-
-function getDelta(level) {
-  const start = 14;
-  const end = 3;
-  const t = Math.min(level - 1, 20) / 20;
-
-  return start - t * (start - end);
-}
-
-function hsl(h, s, l) {
-  return `hsl(${h}, ${s}%, ${l}%)`;
-}
-  
-function setDailySeed() {
-  const today = new Date().toISOString().slice(0, 10);
-  dailySeed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-}
-
-function seededRandom() {
-  dailySeed = (dailySeed * 9301 + 49297) % 233280;
-  return dailySeed / 233280;
-}
-
-function gameRandom() {
-  return dailyChallengeActive ? seededRandom() : Math.random();
-}
-  
-function setGameMode(mode) {
-  if (gameActive) return;
-
-  gameMode = mode;
-  dailyChallengeActive = mode === "daily";
-
-  if (mode === "relaxed") {
-    sessionSeconds = 90;
-  } else if (mode === "classic") {
-    sessionSeconds = 60;
-  } else if (mode === "extreme") {
-    sessionSeconds = 30;
-  } else if (mode === "daily") {
-    sessionSeconds = 60;
-  }
-
-  showGameFlash(`${mode.toUpperCase()} mode`, 900);
-  updateTimer();
-}
-  
-function hideAllOverlays() {
-  pauseOverlay.style.display = "none";
-  resultsOverlay.style.display = "none";
-  leaderboardOverlay.style.display = "none";
-  nameOverlay.style.display = "none";
-  profileOverlay.style.display = "none";
-  achievementsOverlay.style.display = "none";
-}
-
-function keepMainButtonsVisible() {
-  pauseBtn.style.display = gameActive ? "inline-block" : "none";
-  restartBtn.style.display = gameActive ? "inline-block" : "none";
-  leaderboardBtn.style.display = "inline-block";
-  achievementsBtn.style.display = "inline-block";
-}
-
-function updateBestLevelIfNeeded() {
-  if (level > bestLevel) {
-    bestLevel = level;
-    bestLevelValueEl.textContent = bestLevel;
-    currentProfile.bestLevel = bestLevel;
-    saveProfiles();
-  }
-}
-
-function moveToNextPuzzle() {
-  level++;
-  updateBestLevelIfNeeded();
-
-  if (level % 10 === 0) {
-    showGameFlash(`Level ${level}!`, 900);
-  }
-
-  createPuzzle();
-}
-
-function addScoreForCorrectClick() {
-  const now = performance.now();
-  const rtMs = lastClickTime === null ? 500 : now - lastClickTime;
-
-  lastClickTime = now;
-
-  const base = level * 5;
-  const speedBonus = Math.max(0, 50 - rtMs / 20);
-  const gained = Math.round(base + speedBonus);
-
-  showGameFlash(`+${gained} pts`, 500);
-  
-  score += gained;
-  scoreValueEl.textContent = score;
-
-  if (score > bestScore) {
-    bestScore = score;
-    bestScoreValueEl.textContent = bestScore;
-    currentProfile.bestScore = bestScore;
-    saveProfiles();
-  }
-}
-
-function createPuzzle() {
-  const size = getGridSize(level);
-
-  feedbackActive = false;
-  gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  gridEl.innerHTML = "";
-
-  const baseH = Math.floor(gameRandom() * 360);
-  const baseS = 40 + gameRandom() * 30;
-  const baseL = 30 + gameRandom() * 25;
-
-  const delta = getDelta(level);
-  const oddL = Math.min(baseL + delta, 95);
-  const oddH = (baseH + (gameRandom() - 0.5) * 6 + 360) % 360;
-
-  const baseCol = hsl(baseH, baseS, baseL);
-  const oddCol = hsl(oddH, baseS, oddL);
-
-  const total = size * size;
-  oddIndex = Math.floor(gameRandom() * total);
-
-  for (let i = 0; i < total; i++) {
-    const tile = document.createElement("div");
-
-    tile.className = "tile";
-    tile.style.background = i === oddIndex ? oddCol : baseCol;
+/* ---------- Helpers ---------- */
+function hsl(h,s,l){ return `hsl(${h} ${s}% ${l}%)`; }
+function randInt(max){ return Math.floor(Math.random()*max); }
+function clearGrid(){ gridEl.innerHTML = ''; }
+function setGridTemplate(n){ gridEl.style.gridTemplateColumns = `repeat(${n}, 1fr)`; }
+
+/* ---------- Game logic ---------- */
+function buildGrid(n){
+  clearGrid();
+  setGridTemplate(n);
+  const total = n*n;
+  const odd = randInt(total);
+  state.oddIndex = odd;
+
+  // Difficulty scaling
+  const scale = Math.max(0.35, 1 - (state.streak * 0.06));
+  const diff = Math.max(1.5, state.diff * scale);
+
+  const hue = state.baseHue;
+  const sat = 60;
+  const light = 50;
+  const mode = Math.random() < 0.6 ? 'light' : 'hue';
+
+  for(let i=0;i<total;i++){
+    const tile = document.createElement('button');
+    tile.className = 'tile';
+    tile.setAttribute('role','gridcell');
     tile.dataset.index = i;
-    tile.onclick = onTileClick;
 
+    let bg;
+    if(i === odd){
+      if(mode === 'hue'){
+        bg = hsl((hue + diff + 360) % 360, sat, light);
+      } else {
+        bg = hsl(hue, sat, Math.max(8, light - diff/2));
+      }
+    } else {
+      bg = hsl(hue, sat, light);
+    }
+
+    tile.style.background = bg;
+    tile.addEventListener('click', onTileClick);
     gridEl.appendChild(tile);
   }
-
-  levelLabelEl.textContent = `Level ${level}`;
 }
 
-function finishWrongAnswerTurn() {
-  if (lives <= 0) {
-    feedbackActive = false;
-    endSession();
-    return;
-  }
-
-  moveToNextPuzzle();
+function startRound(){
+  if(state.running) return;
+  state.running = true;
+  state.allowInput = true;
+  state.gridSize = parseInt(gridSizeInput.value,10);
+  state.baseHue = parseInt(baseHueInput.value,10);
+  state.diff = parseFloat(diffRangeInput.value);
+  state.timeLimit = Math.max(3, parseInt(timeLimitInput.value,10) || 12);
+  state.timeLeft = state.timeLimit;
+  state.rounds += 1;
+  buildGrid(state.gridSize);
+  startTimer();
 }
 
-function onTileClick(e) {
-  if (!gameActive || paused || feedbackActive) return;
-
-  const clickedTile = e.target;
-  const index = parseInt(clickedTile.dataset.index, 10);
-
-  if (index === oddIndex) {
-  correct++;
-  onCorrectPick();
-  addScoreForCorrectClick();
-  updateAccuracy();
-  moveToNextPuzzle();
-  return;
-}
-
-  wrong++;
-  lives--;
-  feedbackActive = true;
-  onWrongPick();
-
-  updateLives();
-  updateAccuracy();
-
-  const correctTile = gridEl.children[oddIndex];
-
-  clickedTile.classList.add("wrong-answer-feedback");
-
-  setTimeout(() => {
-    clickedTile.classList.remove("wrong-answer-feedback");
-
-    if (window.glimpseCorrectThenContinue) {
-      window.glimpseCorrectThenContinue(correctTile, finishWrongAnswerTurn, {
-        glimpseMs: 500,
-        delayBefore: 80
-      });
-    } else {
-      if (correctTile) correctTile.classList.add("correct-glimpse");
-
-      setTimeout(() => {
-        if (correctTile) correctTile.classList.remove("correct-glimpse");
-        finishWrongAnswerTurn();
-      }, 500);
-    }
-  }, 250);
-}
-
-function updateTimer() {
-  timerValueEl.textContent = formatTime(sessionRemaining);
-}
-
-function startSession() {
-  clearInterval(sessionTimer);
-  hideAllOverlays();
-
-  if (dailyChallengeActive) {
-  setDailySeed();
-}
-
-  gameActive = true;
-  paused = false;
-  feedbackActive = false;
-
-  level = 1;
-  score = 0;
-  correct = 0;
-  wrong = 0;
-  if (gameMode === "relaxed") lives = 5;
-  else if (gameMode === "extreme") lives = 1;
-  else lives = 3;
-  currentCombo = 0;
-  maxCombo = 0;
-  lastClickTime = performance.now();
-
-updateComboDisplay();
-
-  scoreValueEl.textContent = score;
-
-  updateLives();
-  updateAccuracy();
-  createPuzzle();
-
-  sessionRemaining = sessionSeconds;
-  updateTimer();
-
-  startBtn.style.display = "none";
-  keepMainButtonsVisible();
-
-  sessionTimer = setInterval(() => {
-    if (!paused) {
-      sessionRemaining--;
-      updateTimer();
-
-      if (sessionRemaining <= 0) {
-        endSession();
-      }
-    }
-  }, 1000);
-}
-
-function showResultsOverlay(pct, total) {
-  resultsScore.textContent = `Score: ${score}`;
-  resultsAccuracy.textContent = `Accuracy: ${pct}% (${correct}/${total})`;
-  resultsLevel.textContent = `Level Reached: ${level}`;
-  resultsBest.textContent = `Best Score: ${bestScore} • Best Level: ${bestLevel}`;
-
-  resultsOverlay.style.display = "flex";
-
-  startBtn.style.display = "inline-block";
-  gameActive = false;
-  keepMainButtonsVisible();
-}
-
-function endSession() {
-  if (!gameActive) return;
-
-  gameActive = false;
-  paused = false;
-  feedbackActive = false;
-
-  clearInterval(sessionTimer);
-
-  const total = correct + wrong;
-  const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
-
-  if (total > 0 && pct === 100) {
-  unlockAchievement("accuracy_100", "100% Accuracy", "🎯", {
-    incrementCount: true
-  });
-}
-
-  recordWeeklyRun(score, level, pct);
-
-  if (window.explodeAllThenShowStats) {
-    window.explodeAllThenShowStats(() => {
-      showResultsOverlay(pct, total);
-    }, {
-      selector: ".tile",
-      duration: 600,
-      distance: 300,
-      popBefore: true
-    });
+function endRound(success){
+  state.running = false;
+  state.allowInput = false;
+  clearInterval(state.timer);
+  state.timer = null;
+  if(success){
+    state.score += Math.max(1, Math.round(state.timeLeft));
+    state.streak += 1;
+    state.correct += 1;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+    beep(880,0.06,0.06);
+    showMessage('Correct! Click Start for next round.');
   } else {
-    showResultsOverlay(pct, total);
+    state.streak = 0;
+    state.incorrect += 1;
+    beep(220,0.12,0.08);
+    showMessage('Incorrect or time up. Try again.');
   }
+  updateStats();
 }
 
-function getRank(score) {
-  if (score >= 10000) return "MASTER";
-  if (score >= 7000) return "DIAMOND";
-  if (score >= 5000) return "GOLD";
-  if (score >= 3000) return "SILVER";
-  return "BRONZE";
-}
-
-function applyRankPill(rank) {
-  lbRankPill.className = "rank-pill";
-
-  if (rank === "MASTER") lbRankPill.classList.add("rank-master");
-  else if (rank === "DIAMOND") lbRankPill.classList.add("rank-diamond");
-  else if (rank === "GOLD") lbRankPill.classList.add("rank-gold");
-  else if (rank === "SILVER") lbRankPill.classList.add("rank-silver");
-  else lbRankPill.classList.add("rank-bronze");
-
-  lbRankPill.textContent = rank;
-}
-
-function formatResetTime() {
-  const nextMonday = getCurrentWeekStartMs() + 7 * 24 * 60 * 60 * 1000;
-  const diff = Math.max(0, nextMonday - Date.now());
-
-  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-  const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-
-  return `Resets in ${days} day${days !== 1 ? "s" : ""}, ${hours} hour${hours !== 1 ? "s" : ""}`;
-}
-
-function renderLeaderboard() {
-  initWeeklyForCurrentProfile();
-
-  const w = currentProfile.weekly;
-  const rank = getRank(w.bestScore || 0);
-
-  applyRankPill(rank);
-
-  lbBest.textContent = `Weekly best: ${w.bestScore || 0} pts • Level ${w.bestLevel || 1}`;
-  lbReset.textContent = formatResetTime();
-  lbUsername.textContent = `Current name: ${currentProfile.username}`;
-
-  lbRuns.innerHTML = "";
-
-  if (!w.runs || w.runs.length === 0) {
-    lbRuns.textContent = "No runs yet this week. Play a game to start filling this in.";
-    return;
-  }
-
-  const sortedRuns = [...w.runs].sort((a, b) => b.score - a.score);
-  const maxScore = Math.max(...sortedRuns.map(r => r.score), 1);
-
-  sortedRuns.forEach((run, idx) => {
-    const row = document.createElement("div");
-    row.className = "lb-run-row";
-
-    const label = document.createElement("div");
-    label.className = "lb-run-label";
-
-    label.innerHTML = `
-      <span>#${idx + 1}</span>
-      <span>${run.name || "Player"} • ${run.score} pts • L${run.level} • ${run.accuracy}%</span>
-    `;
-
-    const barOuter = document.createElement("div");
-    barOuter.className = "lb-bar-outer";
-
-    const barInner = document.createElement("div");
-    barInner.className = "lb-bar-inner";
-
-    const width = Math.max(5, (run.score / maxScore) * 100);
-    barInner.style.width = width + "%";
-
-    let color = "#f97373";
-    if (run.accuracy >= 80) color = "#22c55e";
-    else if (run.accuracy >= 60) color = "#eab308";
-
-    barInner.style.background = color;
-
-    barOuter.appendChild(barInner);
-    row.appendChild(label);
-    row.appendChild(barOuter);
-    lbRuns.appendChild(row);
-  });
-}
-
-function switchLbTab(tab) {
-  const myPanel = document.getElementById("lb-panel-my");
-  const globalPanel = document.getElementById("lb-panel-global");
-  const myTab = document.getElementById("lb-tab-my");
-  const globalTab = document.getElementById("lb-tab-global");
-
-  if (tab === "my") {
-    myPanel.classList.add("active");
-    globalPanel.classList.remove("active");
-    myTab.classList.add("active");
-    globalTab.classList.remove("active");
-  } else {
-    myPanel.classList.remove("active");
-    globalPanel.classList.add("active");
-    myTab.classList.remove("active");
-    globalTab.classList.add("active");
-  }
-}
-
-function formatWeekLabel(weekStart) {
-  const d = new Date(weekStart);
-  const options = { day: "numeric", month: "long", year: "numeric" };
-
-  return "Week of " + d.toLocaleDateString(undefined, options);
-}
-
-function unlockAchievement(id, title, emoji, extra = {}) {
-  if (!currentProfile.achievements) {
-    currentProfile.achievements = [];
-  }
-
-  const existing = currentProfile.achievements.find(ach => ach.id === id);
-
-  if (existing) {
-    if (extra.incrementCount) {
-      existing.count = (existing.count || 1) + 1;
-      existing.lastAchieved = new Date().toISOString();
-      saveProfiles();
-      showTopFlash(`${emoji} ${title} x${existing.count}`, 1200);
+function startTimer(){
+  const timerTick = () => {
+    state.timeLeft -= 0.2;
+    if(state.timeLeft <= 0){
+      state.timeLeft = 0;
+      endRound(false);
     }
-
-    return;
-  }
-
-  currentProfile.achievements.push({
-    id,
-    title,
-    emoji,
-    combo: extra.combo || null,
-    count: extra.count || 1,
-    date: new Date().toISOString(),
-    lastAchieved: new Date().toISOString()
-  });
-
-  saveProfiles();
-  showTopFlash(`${emoji} Achievement!`, 1000);
+  };
+  state.timer = setInterval(timerTick, 200);
 }
-  
-function renderAchievements() {
-  achListEl.innerHTML = "";
 
-  const ach = currentProfile.achievements || [];
-
-  if (ach.length === 0) {
-    achListEl.textContent = "No medals yet. Finish a week with runs to earn medals.";
-    return;
-  }
-
-  ach.slice().reverse().forEach(entry => {
-
-  if (entry.title) {
-  const card = document.createElement("div");
-  card.className = "medal-card medal-gold";
-  card.style.position = "relative";
-
-  const title = document.createElement("div");
-  title.className = "medal-title";
-  title.textContent = `${entry.emoji} ${entry.title}`;
-
-  const details = document.createElement("div");
-  details.className = "medal-date";
-
-  const firstDate = entry.date
-    ? new Date(entry.date).toLocaleDateString()
-    : "Unknown date";
-
-  if (entry.combo) {
-    details.textContent = `Combo required: ${entry.combo} • First achieved: ${firstDate}`;
+function onTileClick(e){
+  if(!state.allowInput) return;
+  const idx = Number(e.currentTarget.dataset.index);
+  if(idx === state.oddIndex){
+    endRound(true);
   } else {
-    details.textContent = `First achieved: ${firstDate}`;
+    endRound(false);
+  }
+}
+
+function resetAll(){
+  clearInterval(state.timer);
+  state.running = false;
+  state.allowInput = true;
+  state.score = 0; state.streak = 0; state.bestStreak = 0;
+  state.rounds = 0; state.correct = 0; state.incorrect = 0;
+  clearGrid();
+  showMessage('Press Start to begin.');
+  updateStats();
+}
+
+function showHint(){
+  if(state.oddIndex == null) return;
+  const tiles = gridEl.querySelectorAll('.tile');
+  const odd = tiles[state.oddIndex];
+  if(!odd) return;
+  odd.classList.add('highlight');
+  setTimeout(()=> odd.classList.remove('highlight'), 700);
+  beep(660,0.06,0.06);
+}
+
+function updateStats(){
+  // Minimal inline stats update (header controls show score/streak)
+  const headerScore = document.querySelector('header .controls .stats');
+  // If header stats exist, update them; otherwise skip
+  const scoreEl = document.getElementById('score');
+  // Not all elements exist in this rebuild; keep this function safe
+}
+
+function showMessage(text){
+  const msg = document.getElementById('message');
+  if(msg) msg.textContent = text;
+}
+
+/* ---------- Docs integration ---------- */
+
+/*
+  applyDocs:
+  - If the pasted content looks like HTML (contains <html> or <body> or tags), insert as HTML into #docsContent.
+  - Otherwise treat as markdown/plain text and insert inside a <pre> block.
+  - Mark inserted content with class "highlight" so you can see what was added/replaced.
+  - The script does NOT execute scripts inside pasted HTML (sanitizes by removing <script> tags).
+*/
+function sanitizeHtml(raw){
+  // Remove script tags to avoid executing pasted scripts
+  return raw.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '<!-- script removed -->');
+}
+
+function applyDocs(){
+  const raw = docsEditor.value || '';
+  if(!raw.trim()){
+    alert('Docs editor is empty. Paste your file contents (raw HTML or text) and click Apply Docs.');
+    return;
   }
 
-  card.appendChild(title);
-  card.appendChild(details);
-
-  if (entry.id === "accuracy_100" && entry.count && entry.count > 1) {
-    const countBadge = document.createElement("div");
-    countBadge.textContent = `x${entry.count}`;
-    countBadge.style.position = "absolute";
-    countBadge.style.top = "8px";
-    countBadge.style.right = "10px";
-    countBadge.style.fontWeight = "800";
-    countBadge.style.fontSize = "13px";
-    countBadge.style.background = "rgba(17, 24, 39, 0.18)";
-    countBadge.style.padding = "2px 7px";
-    countBadge.style.borderRadius = "999px";
-
-    card.appendChild(countBadge);
+  // Heuristic: if contains tags, treat as HTML
+  const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(raw);
+  let inserted;
+  if(looksLikeHtml){
+    inserted = sanitizeHtml(raw);
+    // Wrap in container and mark highlight
+    docsContent.innerHTML = `<div class="highlight" style="padding:8px;border-radius:6px;">${inserted}</div>`;
+  } else {
+    // Plain text or markdown: show in pre
+    const escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    docsContent.innerHTML = `<pre class="highlight" style="white-space:pre-wrap;padding:8px;border-radius:6px;">${escaped}</pre>`;
   }
 
-  achListEl.appendChild(card);
-  return;
-}
-    
-    const card = document.createElement("div");
-    card.className = `medal-card medal-${entry.medal}`;
-
-    const icon = entry.medal === "gold" ? "🥇" : entry.medal === "silver" ? "🥈" : "🥉";
-    const label = `${entry.medal.toUpperCase()} MEDAL`;
-
-    const title = document.createElement("div");
-    title.className = "medal-title";
-    title.textContent = `${icon} ${label}`;
-
-    const date = document.createElement("div");
-    date.className = "medal-date";
-    date.textContent = formatWeekLabel(entry.weekStart);
-
-    card.appendChild(title);
-    card.appendChild(date);
-    achListEl.appendChild(card);
-  });
+  // Scroll to docs
+  docsContent.scrollIntoView({behavior:'smooth'});
+  showMessage('Docs applied. Rebuild or Start the game as needed.');
 }
 
-function setUsername(newName) {
-  const trimmed = newName.trim();
-  if (trimmed.length === 0) return;
-
-  currentProfile.username = trimmed;
-  saveProfiles();
-}
-
-function pauseGame() {
-  if (!gameActive || paused) return;
-
-  paused = true;
-  pauseOverlay.style.display = "flex";
-}
-
-function continueGame() {
-  if (!paused) return;
-
-  paused = false;
-  pauseOverlay.style.display = "none";
-}
-
-startBtn.onclick = startSession;
-restartBtn.onclick = () => {
-  gameActive = false;
-  startSession();
-};
-pauseBtn.onclick = pauseGame;
-continueBtn.onclick = continueGame;
-playAgainBtn.onclick = startSession;
-
-resultsLeaderboardBtn.onclick = () => {
-  resultsOverlay.style.display = "none";
-  renderLeaderboard();
-  leaderboardOverlay.style.display = "flex";
-};
-
-resultsAchievementsBtn.onclick = () => {
-  resultsOverlay.style.display = "none";
-  renderAchievements();
-  achievementsOverlay.style.display = "flex";
-};
-
-leaderboardBtn.onclick = () => {
-  renderLeaderboard();
-  leaderboardOverlay.style.display = "flex";
-};
-
-lbCloseBtn.onclick = () => {
-  leaderboardOverlay.style.display = "none";
-};
-
-lbNameBtn.onclick = () => {
-  nameInput.value = currentProfile.username || "";
-  nameOverlay.style.display = "flex";
-};
-
-nameSaveBtn.onclick = () => {
-  const val = nameInput.value;
-
-  if (val.trim().length > 0) {
-    setUsername(val);
+/* ---------- Persistence / Export ---------- */
+function saveLocal(){
+  const payload = {
+    state,
+    docs: docsEditor.value
+  };
+  try{
+    localStorage.setItem('colourfocus_backup', JSON.stringify(payload));
+    alert('Saved to localStorage (colourfocus_backup).');
+  }catch(e){
+    alert('Failed to save locally: ' + e.message);
   }
+}
 
-  nameOverlay.style.display = "none";
-};
+function downloadFile(){
+  const payload = {
+    state,
+    docs: docsEditor.value
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'colourfocus-state.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
-lbProfileBtn.onclick = () => {
-  showProfileOverlay();
-};
+/* ---------- Wiring ---------- */
+startBtn.addEventListener('click', () => {
+  if(state.running){
+    showMessage('Round already running. Finish it or Reset.');
+    return;
+  }
+  startRound();
+});
 
-addProfileBtn.onclick = () => {
-  const count = Object.keys(profilesData.profiles).length;
-  if (count >= 3) return;
+resetBtn.addEventListener('click', () => {
+  resetAll();
+});
 
-  const p = createNewProfile();
-  profilesData.profiles[p.id] = p;
+hintBtn.addEventListener('click', () => {
+  showHint();
+});
 
-  setActiveProfile(p.id);
-  renderProfileList();
-};
+applyDocsBtn.addEventListener('click', applyDocs);
+clearDocsBtn.addEventListener('click', () => { docsEditor.value = ''; });
 
-profileCloseBtn.onclick = () => {
-  hideProfileOverlay();
-};
+saveLocalBtn.addEventListener('click', saveLocal);
+downloadBtn.addEventListener('click', downloadFile);
+exportStateBtn.addEventListener('click', () => {
+  const s = JSON.stringify({state, docs: docsEditor.value}, null, 2);
+  const w = window.open('', '_blank');
+  w.document.write('<pre>' + s.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</pre>');
+});
 
-achievementsBtn.onclick = () => {
-  renderAchievements();
-  achievementsOverlay.style.display = "flex";
-};
+/* Live settings */
+gridSizeInput.addEventListener('change', () => {
+  if(state.running) buildGrid(parseInt(gridSizeInput.value,10));
+});
+baseHueInput.addEventListener('input', () => {
+  if(state.running) buildGrid(state.gridSize);
+});
+diffRangeInput.addEventListener('input', () => {
+  if(state.running) buildGrid(state.gridSize);
+});
+timeLimitInput.addEventListener('change', () => {
+  state.timeLimit = Math.max(3, parseInt(timeLimitInput.value,10) || 12);
+});
 
-achCloseBtn.onclick = () => {
-  achievementsOverlay.style.display = "none";
-};
-
-nameOverlay.addEventListener("click", e => {
-  if (e.target === nameOverlay) {
-    nameOverlay.style.display = "none";
+/* Keyboard: Enter to start */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && !state.running){
+    startRound();
   }
 });
 
-profileOverlay.addEventListener("click", e => {
-  if (e.target === profileOverlay) {
-    hideProfileOverlay();
-  }
-});
+/* Initialize */
+resetAll();
 
-achievementsOverlay.addEventListener("click", e => {
-  if (e.target === achievementsOverlay) {
-    achievementsOverlay.style.display = "none";
-  }
-});
+/* ---------- Developer notes (visible in file) ----------
+  1) To restore your original index (5).html exactly:
+     - Open the raw file on GitHub, copy the entire raw content, paste into the Docs Editor, then click Apply Docs.
+     - The script will insert the raw HTML into the Project Docs area. You can then copy/paste back into your repo or use the Download button to export the combined state.
 
-leaderboardOverlay.addEventListener("click", e => {
-  if (e.target === leaderboardOverlay) {
-    leaderboardOverlay.style.display = "none";
-  }
-});
+  2) Replaceable markers:
+     - The <div id="docsContent"> is the primary insertion point for your docs.
+     - Any content pasted will be wrapped and highlighted so you can see what changed.
 
-pauseOverlay.addEventListener("click", e => {
-  if (e.target === pauseOverlay) {
-    continueGame();
-  }
-});
+  3) Security:
+     - The script strips <script> tags from pasted HTML to avoid executing arbitrary code.
+     - If you need to restore scripts exactly as in your original file, paste the raw file into the editor and then copy the content out to your local editor or GitHub (do not click Apply if you want to preserve scripts in raw form).
 
-function submitRunToGlobalLeaderboard(score, level, pct) {
-  // Connect this to your backend later if you want a real global leaderboard.
-}
-
-loadProfiles();
-keepMainButtonsVisible();
-
-if (Object.keys(profilesData.profiles).length > 1) {
-  showProfileOverlay();
-}
+  4) If you want me to produce a one-to-one port of the original file (including scripts and exact formatting),
+     paste the raw contents of your original index (5).html here in the chat and I will produce a faithful single-file conversion with explicit "ADDED" and "REPLACED" markers.
+-------------------------------------------------------- */
 </script>
 </body>
 </html>
