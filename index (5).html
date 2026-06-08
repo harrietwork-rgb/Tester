@@ -672,6 +672,22 @@ themeToggle.onclick = () => {
   localStorage.setItem("colourFocusTheme", isDark ? "dark" : "light");
 };
 
+  let dailySeed = 1;
+
+function setDailySeed() {
+  const today = new Date().toISOString().slice(0, 10);
+  dailySeed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
+function seededRandom() {
+  dailySeed = (dailySeed * 9301 + 49297) % 233280;
+  return dailySeed / 233280;
+}
+
+function gameRandom() {
+  return dailyChallengeActive ? seededRandom() : Math.random();
+}
+
 function createRandomUsername() {
   return `CF-${Math.floor(1000 + Math.random() * 9000)}`;
 }
@@ -1103,19 +1119,19 @@ function createPuzzle() {
   gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
   gridEl.innerHTML = "";
 
-  const baseH = Math.floor(Math.random() * 360);
-  const baseS = 40 + Math.random() * 30;
-  const baseL = 30 + Math.random() * 25;
+  const baseH = Math.floor(gameRandom() * 360);
+  const baseS = 40 + gameRandom() * 30;
+  const baseL = 30 + gameRandom() * 25;
 
   const delta = getDelta(level);
   const oddL = Math.min(baseL + delta, 95);
-  const oddH = (baseH + (Math.random() - 0.5) * 6 + 360) % 360;
+  const oddH = (baseH + (gameRandom()() - 0.5) * 6 + 360) % 360;
 
   const baseCol = hsl(baseH, baseS, baseL);
   const oddCol = hsl(oddH, baseS, oddL);
 
   const total = size * size;
-  oddIndex = Math.floor(Math.random() * total);
+  oddIndex = Math.floor(gameRandom()() * total);
 
   for (let i = 0; i < total; i++) {
     const tile = document.createElement("div");
@@ -1207,6 +1223,9 @@ function startSession() {
   currentCombo = 0;
   maxCombo = 0;
   lastClickTime = performance.now();
+  if (dailyChallengeActive) {
+  setDailySeed();
+}
 
 updateComboDisplay();
 
