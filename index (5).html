@@ -1153,13 +1153,13 @@ function createPuzzle() {
 
   const delta = getDelta(level);
   const oddL = Math.min(baseL + delta, 95);
-  const oddH = (baseH + (gameRandom()() - 0.5) * 6 + 360) % 360;
+  const oddH = (baseH + (gameRandom() - 0.5) * 6 + 360) % 360;
 
   const baseCol = hsl(baseH, baseS, baseL);
   const oddCol = hsl(oddH, baseS, oddL);
 
   const total = size * size;
-  oddIndex = Math.floor(gameRandom()() * total);
+  oddIndex = Math.floor(gameRandom() * total);
 
   for (let i = 0; i < total; i++) {
     const tile = document.createElement("div");
