@@ -1239,6 +1239,10 @@ function startSession() {
   clearInterval(sessionTimer);
   hideAllOverlays();
 
+  if (dailyChallengeActive) {
+  setDailySeed();
+}
+
   gameActive = true;
   paused = false;
   feedbackActive = false;
@@ -1247,13 +1251,12 @@ function startSession() {
   score = 0;
   correct = 0;
   wrong = 0;
-  lives = 3;
+  if (gameMode === "relaxed") lives = 5;
+  else if (gameMode === "extreme") lives = 1;
+  else lives = 3;
   currentCombo = 0;
   maxCombo = 0;
   lastClickTime = performance.now();
-  if (dailyChallengeActive) {
-  setDailySeed();
-}
 
 updateComboDisplay();
 
