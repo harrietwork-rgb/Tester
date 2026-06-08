@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NFRD369Q9E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag("js", new Date());
-  gtag("config", "G-NFRD369Q9E", { send_page_view: true });
-</script>
-  
 <meta charset="UTF-8">
 <title>Colour Focus - Perception Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,7 +68,6 @@ h1 {
   top: 0;
 }
 
-/* TOP STATS */
 .top-row {
   display: flex;
   gap: 8px;
@@ -157,7 +148,7 @@ h1 {
   font-size: 16px;
   opacity: 0;
 }
-  
+
 .controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -205,26 +196,8 @@ body.dark .mode-row {
 }
 
 @media (max-width: 420px) {
-
-  body {
-    padding: 10px 10px 130px;
-  }
-
-  .controls {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .mode-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .top-row, .mid-row {
-    gap: 6px;
-  }
-
-  .tile {
-    border-radius: 8px;
-  }
+  body { padding: 10px 10px 130px; }
+  .mode-row { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
@@ -272,7 +245,6 @@ body.dark .mode-row {
 
   <div id="grid" class="grid"></div>
 
-  <!-- MOVED HERE (IMPORTANT CHANGE) -->
   <div class="controls">
     <button id="start-btn" class="primary">Start</button>
     <button id="restart-btn" class="ghost">Restart</button>
@@ -296,1275 +268,168 @@ body.dark .mode-row {
 
 <script>
 (() => {
-  const STORAGE_KEYS = {
-    theme: "colourFocusTheme",
-    profiles: "colourFocusProfiles",
-    leaderboards: "colourFocusLeaderboards",
-    dailyHues: "colourFocusDailyHues"
-  };
-
-  const MODE_CONFIG = {
-    relaxed: {
-      label: "Relaxed",
-      timerSeconds: 120,
-      lives: Infinity,
-      endless: true,
-      showBestLevel: true,
-      rank: null,
-      scoreMultiplier: 1,
-      oddDeltaBoost: 0.95
-    },
-    classic: {
-      label: "Classic",
-      timerSeconds: 60,
-      lives: 3,
-      endless: true,
-      showBestLevel: true,
-      rank: "classic",
-      scoreMultiplier: 1,
-      oddDeltaBoost: 1
-    },
-    extreme: {
-      label: "Extreme",
-      timerSeconds: 30,
-      lives: 1,
-      endless: true,
-      showBestLevel: true,
-      rank: "extreme",
-      scoreMultiplier: 1.12,
-      oddDeltaBoost: 0.84
-    },
-    daily: {
-      label: "Daily",
-      timerSeconds: 60,
-      lives: 3,
-      endless: true,
-      showBestLevel: true,
-      rank: "classic",
-      scoreMultiplier: 1,
-      oddDeltaBoost: 1
-    }
-  };
-
-  const baseAccent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2563eb";
-  const baseAccentSoft = getComputedStyle(document.documentElement).getPropertyValue("--accent-soft").trim() || "#dbeafe";
-
   const els = {
     body: document.body,
     themeToggle: document.getElementById("theme-toggle"),
     grid: document.getElementById("grid"),
-    timerValue: document.getElementById("timer-value"),
-    scoreValue: document.getElementById("score-value"),
-    bestScoreValue: document.getElementById("best-score-value"),
-    bestLevelValue: document.getElementById("best-level-value"),
-    bestScoreLabel: document.getElementById("best-score-label"),
-    bestLevelLabel: document.getElementById("best-level-label"),
-    levelLabel: document.getElementById("level-label"),
+    timer: document.getElementById("timer-value"),
+    score: document.getElementById("score-value"),
+    bestScore: document.getElementById("best-score-value"),
+    bestLevel: document.getElementById("best-level-value"),
+    level: document.getElementById("level-label"),
     accuracy: document.getElementById("accuracy"),
     lives: document.getElementById("lives"),
     flash: document.getElementById("game-flash"),
     combo: document.getElementById("comboDisplay"),
-
-    pauseOverlay: document.getElementById("pause-overlay"),
-    resultsOverlay: document.getElementById("results-overlay"),
-    leaderboardOverlay: document.getElementById("leaderboard-overlay"),
-    nameOverlay: document.getElementById("name-overlay"),
-    profileOverlay: document.getElementById("profile-overlay"),
-    achievementsOverlay: document.getElementById("achievements-overlay"),
-
-    pauseBtn: document.getElementById("pause-btn"),
-    continueBtn: document.getElementById("continue-btn"),
-    startBtn: document.getElementById("start-btn"),
-    restartBtn: document.getElementById("restart-btn"),
-    playAgainBtn: document.getElementById("play-again-btn"),
-    leaderboardBtn: document.getElementById("leaderboard-btn"),
-    achievementsBtn: document.getElementById("achievements-btn"),
-    resultsLeaderboardBtn: document.getElementById("results-leaderboard-btn"),
-    resultsAchievementsBtn: document.getElementById("results-achievements-btn"),
-    lbCloseBtn: document.getElementById("lb-close-btn"),
-    lbNameBtn: document.getElementById("lb-name-btn"),
-    lbProfileBtn: document.getElementById("lb-profile-btn"),
-
-    resultsTitle: document.getElementById("results-title"),
-    resultsModeBadge: document.getElementById("results-mode-badge"),
-    resultsScore: document.getElementById("results-score"),
-    resultsAccuracy: document.getElementById("results-accuracy"),
-    resultsLevel: document.getElementById("results-level"),
-    resultsBest: document.getElementById("results-best"),
-
-    nameInput: document.getElementById("name-input"),
-    nameSaveBtn: document.getElementById("name-save-btn"),
-
-    profileList: document.getElementById("profile-list"),
-    addProfileBtn: document.getElementById("add-profile-btn"),
-    profileCloseBtn: document.getElementById("profile-close-btn"),
-
-    achList: document.getElementById("ach-list"),
-    achCloseBtn: document.getElementById("ach-close-btn"),
-
-    modeRow: document.getElementById("mode-row"),
-    leaderboardTabs: Array.from(document.querySelectorAll(".lb-tab")),
-    leaderboardPanels: {
-      classic: document.getElementById("lb-panel-classic"),
-      extreme: document.getElementById("lb-panel-extreme"),
-      daily: document.getElementById("lb-panel-daily"),
-      relaxed: document.getElementById("lb-panel-relaxed")
-    },
-    leaderboardSummary: {
-      classic: document.getElementById("lb-summary-classic"),
-      extreme: document.getElementById("lb-summary-extreme"),
-      daily: document.getElementById("lb-summary-daily"),
-      relaxed: document.getElementById("lb-summary-relaxed")
-    },
-    leaderboardRank: {
-      classic: document.getElementById("lb-rank-pill-classic"),
-      extreme: document.getElementById("lb-rank-pill-extreme"),
-      daily: document.getElementById("lb-rank-pill-daily"),
-      relaxed: document.getElementById("lb-rank-pill-relaxed")
-    },
-    leaderboardReset: {
-      classic: document.getElementById("lb-reset-classic"),
-      extreme: document.getElementById("lb-reset-extreme"),
-      daily: document.getElementById("lb-reset-daily"),
-      relaxed: document.getElementById("lb-reset-relaxed")
-    },
-    leaderboardUsername: {
-      classic: document.getElementById("lb-username-classic"),
-      extreme: document.getElementById("lb-username-extreme"),
-      daily: document.getElementById("lb-username-daily"),
-      relaxed: document.getElementById("lb-username-relaxed")
-    },
-    leaderboardRuns: {
-      classic: document.getElementById("lb-runs-classic"),
-      extreme: document.getElementById("lb-runs-extreme"),
-      daily: document.getElementById("lb-runs-daily"),
-      relaxed: document.getElementById("lb-runs-relaxed")
-    }
+    start: document.getElementById("start-btn"),
+    restart: document.getElementById("restart-btn"),
+    pause: document.getElementById("pause-btn"),
+    modeButtons: document.querySelectorAll(".mode-row button")
   };
 
   const state = {
     mode: "relaxed",
     running: false,
-    paused: false,
-    feedbackLock: false,
     level: 1,
     score: 0,
     correct: 0,
     wrong: 0,
-    lives: Infinity,
-    remaining: 120,
+    lives: 3,
+    remaining: 60,
     timer: null,
-    oddIndex: -1,
-    currentCombo: 0,
-    maxCombo: 0,
-    lastClickTime: null,
-    currentProfileId: null,
-    profiles: null,
-    boards: null,
-    dailyDateKey: getLocalDateKey(),
-    dailyHue: 210,
-    currentPuzzleHue: 210,
-    currentPuzzleSeed: 0
+    oddIndex: 0,
+    combo: 0
   };
 
-  function getLocalDateKey(date = new Date()) {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-
-  function hashString(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) {
-      h = (h * 31 + str.charCodeAt(i)) >>> 0;
-    }
-    return h >>> 0;
-  }
-
-  function safeParse(raw, fallback) {
-    try {
-      return raw ? JSON.parse(raw) : fallback;
-    } catch {
-      return fallback;
-    }
-  }
-
-  function saveJSON(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  function createDefaultStats() {
-    return {
-      classic: { bestScore: 0, bestLevel: 1 },
-      extreme: { bestScore: 0, bestLevel: 1 },
-      daily: { dateKey: getLocalDateKey(), bestScore: 0, bestLevel: 1 },
-      relaxed: { bestScore: 0, bestLevel: 1 }
-    };
-  }
-
-  function createProfile() {
-    return {
-      id: `p_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-      username: `CF-${Math.floor(1000 + Math.random() * 9000)}`,
-      stats: createDefaultStats(),
-      achievements: []
-    };
-  }
-
-  function normalizeProfile(profile) {
-    if (!profile || typeof profile !== "object") return createProfile();
-    if (!profile.id) profile.id = `p_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    if (!profile.username) profile.username = `CF-${Math.floor(1000 + Math.random() * 9000)}`;
-    if (!profile.stats) profile.stats = createDefaultStats();
-
-    const defaults = createDefaultStats();
-    for (const mode of Object.keys(defaults)) {
-      profile.stats[mode] = { ...defaults[mode], ...(profile.stats[mode] || {}) };
-    }
-
-    if (!Array.isArray(profile.achievements)) profile.achievements = [];
-    return profile;
-  }
-
-  function loadProfiles() {
-    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.profiles), null);
-
-    if (!raw || !raw.profiles || Object.keys(raw.profiles).length === 0) {
-      const p = createProfile();
-      state.profiles = { activeId: p.id, profiles: { [p.id]: p } };
-      state.currentProfileId = p.id;
-      saveProfiles();
-      return;
-    }
-
-    const normalized = {
-      activeId: raw.activeId,
-      profiles: {}
-    };
-
-    for (const [id, profile] of Object.entries(raw.profiles)) {
-      normalized.profiles[id] = normalizeProfile(profile);
-    }
-
-    if (!normalized.activeId || !normalized.profiles[normalized.activeId]) {
-      normalized.activeId = Object.keys(normalized.profiles)[0];
-    }
-
-    state.profiles = normalized;
-    state.currentProfileId = normalized.activeId;
-    saveProfiles();
-  }
-
-  function saveProfiles() {
-    saveJSON(STORAGE_KEYS.profiles, state.profiles);
-  }
-
-  function getCurrentProfile() {
-    return state.profiles.profiles[state.currentProfileId];
-  }
-
-  function setActiveProfile(id) {
-    if (!state.profiles.profiles[id]) return;
-    state.profiles.activeId = id;
-    state.currentProfileId = id;
-    saveProfiles();
-    syncPersonalBestsToUI();
-    renderProfileList();
-  }
-
-  function loadBoards() {
-    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.leaderboards), null);
-    state.boards = raw && typeof raw === "object" ? raw : { classic: { runs: [] }, extreme: { runs: [] }, daily: { days: {} } };
-
-    if (!state.boards.classic) state.boards.classic = { runs: [] };
-    if (!state.boards.extreme) state.boards.extreme = { runs: [] };
-    if (!state.boards.daily) state.boards.daily = { days: {} };
-    if (!state.boards.daily.days) state.boards.daily.days = {};
-  }
-
-  function saveBoards() {
-    saveJSON(STORAGE_KEYS.leaderboards, state.boards);
-  }
-
-  function getDailyHue(dateKey) {
-    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.dailyHues), {});
-    if (typeof raw[dateKey] !== "number") {
-      const seed = hashString(dateKey);
-      raw[dateKey] = seed % 360;
-      saveJSON(STORAGE_KEYS.dailyHues, raw);
-    }
-    return raw[dateKey];
-  }
-
-  function getCurrentStats(mode) {
-    return getCurrentProfile().stats[mode];
-  }
-
-  function syncPersonalBestsToUI() {
-    const stats = getCurrentStats(state.mode);
-    els.bestScoreValue.textContent = stats.bestScore ?? 0;
-    els.bestLevelValue.textContent = stats.bestLevel ?? 1;
-
-    if (state.mode === "relaxed") {
-      els.bestScoreLabel.textContent = "Best Score";
-      els.bestLevelLabel.textContent = "Best Level";
-    } else if (state.mode === "extreme") {
-      els.bestScoreLabel.textContent = "Best Score";
-      els.bestLevelLabel.textContent = "Best Level";
-    } else if (state.mode === "daily") {
-      els.bestScoreLabel.textContent = "Best Score";
-      els.bestLevelLabel.textContent = "Best Level";
-    } else {
-      els.bestScoreLabel.textContent = "Best Score";
-      els.bestLevelLabel.textContent = "Best Level";
-    }
-  }
-
-  function setThemeFromStorage() {
-    const theme = localStorage.getItem(STORAGE_KEYS.theme);
-    if (theme === "dark") {
-      document.body.classList.add("dark");
-      els.themeToggle.textContent = "☀️";
-    } else {
-      els.themeToggle.textContent = "🌙";
-    }
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("dark");
-    const isDark = document.body.classList.contains("dark");
-    els.themeToggle.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem(STORAGE_KEYS.theme, isDark ? "dark" : "light");
-  }
-
-  function showFlash(text, duration = 700) {
-    els.flash.textContent = text;
-    els.flash.classList.add("show");
-    clearTimeout(showFlash._t);
-    showFlash._t = setTimeout(() => {
-      els.flash.classList.remove("show");
-    }, duration);
-  }
-
-  function showCombo(text, duration = 1200) {
-    els.combo.textContent = text;
-    els.combo.style.opacity = 1;
-    clearTimeout(showCombo._t);
-    showCombo._t = setTimeout(() => {
-      if (state.currentCombo > 1) {
-        els.combo.textContent = `Combo x${state.currentCombo}`;
-        els.combo.style.opacity = 1;
-      } else {
-        els.combo.style.opacity = 0;
-      }
-    }, duration);
-  }
-
-  function updateComboDisplay() {
-    if (state.currentCombo <= 1) {
-      els.combo.style.opacity = 0;
-      return;
-    }
-    els.combo.textContent = `Combo x${state.currentCombo}`;
-    els.combo.style.opacity = 1;
-  }
-
-  function vibrate(ms) {
-    if (navigator.vibrate) navigator.vibrate(ms);
-  }
-
-  function updateTimerUI() {
-    const minutes = Math.floor(state.remaining / 60);
-    const seconds = state.remaining % 60;
-    els.timerValue.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  }
-
-  function updateAccuracyUI() {
-    const total = state.correct + state.wrong;
-    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
-    els.accuracy.textContent = `${pct}% (${state.correct} / ${total})`;
-  }
-
-  function updateLivesUI() {
-    if (state.lives === Infinity) {
-      els.lives.textContent = "∞";
-      return;
-    }
-    const hearts = "❤️".repeat(Math.max(0, state.lives));
-    const empty = "🤍".repeat(Math.max(0, 3 - state.lives));
-    els.lives.textContent = hearts + empty;
-  }
-
-  function updateModeButtons() {
-    Array.from(els.modeRow.querySelectorAll("button")).forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.mode === state.mode);
-    });
-  }
-
-  function applyDailyAccent() {
-    if (state.mode === "daily") {
-      const hue = state.dailyHue;
-      document.documentElement.style.setProperty("--accent", `hsl(${hue}, 88%, 54%)`);
-      document.documentElement.style.setProperty("--accent-soft", `hsl(${hue}, 92%, 92%)`);
-    } else {
-      document.documentElement.style.setProperty("--accent", baseAccent);
-      document.documentElement.style.setProperty("--accent-soft", baseAccentSoft);
-    }
-  }
-
-  function setMode(mode, restart = true) {
-    if (!MODE_CONFIG[mode]) return;
-    state.mode = mode;
-    state.dailyDateKey = getLocalDateKey();
-    state.dailyHue = getDailyHue(state.dailyDateKey);
-    applyDailyAccent();
-    updateModeButtons();
-    syncPersonalBestsToUI();
-    showFlash(`${MODE_CONFIG[mode].label} mode`, 750);
-    if (restart) startSession(mode);
-  }
-
-  function getClassicRank(score) {
-    if (score >= 10000) return "MASTER";
-    if (score >= 7000) return "DIAMOND";
-    if (score >= 5000) return "GOLD";
-    if (score >= 3000) return "SILVER";
-    return "BRONZE";
-  }
-
-  function getExtremeRank(level) {
-    if (level >= 40) return "MASTER";
-    if (level >= 35) return "DIAMOND";
-    if (level >= 30) return "GOLD";
-    if (level >= 25) return "SILVER";
-    return "BRONZE";
-  }
-
-  function setRankPill(el, rank) {
-    el.className = "rank-pill";
-    if (rank === "MASTER") el.classList.add("rank-master");
-    else if (rank === "DIAMOND") el.classList.add("rank-diamond");
-    else if (rank === "GOLD") el.classList.add("rank-gold");
-    else if (rank === "SILVER") el.classList.add("rank-silver");
-    else el.classList.add("rank-bronze");
-    el.textContent = rank;
-  }
-
-  function getModeLeaderboardData(mode) {
-    if (mode === "daily") {
-      const dateKey = getLocalDateKey();
-      if (!state.boards.daily.days[dateKey]) {
-        state.boards.daily.days[dateKey] = { runs: [] };
-      }
-      return state.boards.daily.days[dateKey];
-    }
-    if (!state.boards[mode]) state.boards[mode] = { runs: [] };
-    return state.boards[mode];
-  }
-
-  function resetDailyStoreIfNeeded() {
-    const dateKey = getLocalDateKey();
-    if (dateKey !== state.dailyDateKey) {
-      state.dailyDateKey = dateKey;
-      state.dailyHue = getDailyHue(dateKey);
-      applyDailyAccent();
-      const current = getCurrentProfile().stats.daily;
-      current.dateKey = dateKey;
-      current.bestScore = 0;
-      current.bestLevel = 1;
-      saveProfiles();
-    }
-  }
-
-  function updatePersonalBest(mode) {
-    const profile = getCurrentProfile();
-    const stats = profile.stats[mode] || (profile.stats[mode] = {});
-    if (mode === "daily") {
-      const dateKey = getLocalDateKey();
-      if (stats.dateKey !== dateKey) {
-        stats.dateKey = dateKey;
-        stats.bestScore = 0;
-        stats.bestLevel = 1;
-      }
-    }
-
-    if (state.score > (stats.bestScore || 0)) {
-      stats.bestScore = state.score;
-    }
-    if (state.level > (stats.bestLevel || 1)) {
-      stats.bestLevel = state.level;
-    }
-
-    saveProfiles();
-    syncPersonalBestsToUI();
-  }
-
-  function recordRun(mode, accuracyPct) {
-    const profile = getCurrentProfile();
-    const name = profile.username || "Player";
-    const run = {
-      name,
-      score: state.score,
-      level: state.level,
-      accuracy: accuracyPct,
-      date: new Date().toISOString(),
-      mode
-    };
-
-    if (mode === "relaxed") {
-      updatePersonalBest("relaxed");
-      return;
-    }
-
-    const bucket = getModeLeaderboardData(mode);
-    bucket.runs.push(run);
-    bucket.runs.sort((a, b) => b.score - a.score || b.level - a.level || b.accuracy - a.accuracy);
-    bucket.runs = bucket.runs.slice(0, 10);
-
-    saveBoards();
-    updatePersonalBest(mode);
-  }
-
-  function formatResetText(mode) {
-    if (mode === "daily") {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      const diff = Math.max(0, tomorrow.getTime() - Date.now());
-      const mins = Math.floor(diff / 60000);
-      const hrs = Math.floor(mins / 60);
-      const remMins = mins % 60;
-      return `Resets at midnight local time • ${hrs}h ${remMins}m left`;
-    }
-    if (mode === "relaxed") {
-      return "No leaderboard here — your personal best is saved locally.";
-    }
-    const label = mode === "classic" ? "Classic" : "Extreme";
-    return `${label} leaderboard is local to this device`;
-  }
-
-  function getCurrentRankForMode(mode) {
-    if (mode === "extreme") return getExtremeRank(state.level);
-    if (mode === "relaxed") return "RELAXED";
-    return getClassicRank(state.score);
-  }
-
-  function getGridSize(level) {
-    if (level <= 2) return 2;
-    if (level <= 4) return 3;
-    if (level <= 7) return 4;
-    if (level <= 11) return 5;
-    return 6;
-  }
-
-  function getDelta(level, mode) {
-    const start = mode === "relaxed" ? 15 : mode === "extreme" ? 12 : 14;
-    const end = mode === "relaxed" ? 2 : mode === "extreme" ? 2.5 : 3;
-    const t = Math.min(level - 1, 24) / 24;
-    return start - t * (start - end);
-  }
-
-  function hsl(h, s, l) {
-    return `hsl(${h}, ${s}%, ${l}%)`;
-  }
-
-  function seededRandom(seed) {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-  }
-
-  function createPuzzle() {
-    const size = getGridSize(state.level);
-    const total = size * size;
-    els.grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-    els.grid.innerHTML = "";
-
-    const dayHue = state.mode === "daily" ? state.dailyHue : Math.floor(Math.random() * 360);
-    const baseSeed = Date.now() + state.level * 997 + Math.floor(Math.random() * 1000);
-
-    let baseH = dayHue;
-    let baseS = state.mode === "daily" ? 70 : 42 + Math.random() * 28;
-    let baseL = state.mode === "daily" ? 42 + Math.random() * 8 : 30 + Math.random() * 25;
-    let oddH = baseH;
-    let oddS = baseS;
-
-    const delta = getDelta(state.level, state.mode) * (MODE_CONFIG[state.mode].oddDeltaBoost || 1);
-    let oddL = Math.min(baseL + delta, 95);
-
-    if (state.mode !== "daily") {
-      oddH = (baseH + (Math.random() - 0.5) * (state.mode === "extreme" ? 4 : 6) + 360) % 360;
-    }
-
-    const baseColor = hsl(baseH, baseS, baseL);
-    const oddColor = hsl(oddH, oddS, oddL);
-
-    state.oddIndex = Math.floor(Math.random() * total);
-    state.currentPuzzleHue = baseH;
-    state.currentPuzzleSeed = baseSeed;
-
-    for (let i = 0; i < total; i++) {
-      const tile = document.createElement("div");
-      tile.className = "tile";
-      tile.style.background = i === state.oddIndex ? oddColor : baseColor;
-      tile.dataset.index = String(i);
-      tile.addEventListener("click", onTileClick);
-      els.grid.appendChild(tile);
-    }
-
-    els.levelLabel.textContent = `Level ${state.level}`;
-  }
-
-  function updateProgressAfterCorrect() {
-    state.level += 1;
-    updateBestLevelDisplay();
-    if (state.level % 10 === 0) {
-      showFlash(`Level ${state.level}!`, 900);
-    }
-    createPuzzle();
-  }
-
-  function updateBestLevelDisplay() {
-    const currentStats = getCurrentStats(state.mode);
-    if (state.level > (currentStats.bestLevel || 1)) {
-      currentStats.bestLevel = state.level;
-      saveProfiles();
-    }
-    syncPersonalBestsToUI();
-  }
-
-  function gainScore() {
-    const now = performance.now();
-    const rtMs = state.lastClickTime === null ? 500 : now - state.lastClickTime;
-    state.lastClickTime = now;
-
-    const base = state.level * 5 * (MODE_CONFIG[state.mode].scoreMultiplier || 1);
-    const speedBonus = Math.max(0, 50 - rtMs / 20);
-    const gained = Math.max(1, Math.round(base + speedBonus));
-
-    state.score += gained;
-    els.scoreValue.textContent = state.score;
-    showFlash(`+${gained} pts`, 500);
-
-    const currentStats = getCurrentStats(state.mode);
-    if (state.score > (currentStats.bestScore || 0)) {
-      currentStats.bestScore = state.score;
-      saveProfiles();
-      syncPersonalBestsToUI();
-    }
-  }
-
-  function finishWrongAnswerTurn() {
-    state.feedbackLock = false;
-
-    if (state.mode !== "relaxed" && state.lives <= 0) {
-      endSession("lives");
-      return;
-    }
-
-    updateProgressAfterCorrect();
-  }
-
-  function onTileClick(event) {
-    if (!state.running || state.paused || state.feedbackLock) return;
-
-    const tile = event.currentTarget;
-    const index = parseInt(tile.dataset.index, 10);
-
-    if (index === state.oddIndex) {
-      state.correct += 1;
-      state.currentCombo += 1;
-      state.maxCombo = Math.max(state.maxCombo, state.currentCombo);
-      updateComboDisplay();
-      updateAccuracyUI();
-      vibrate(20);
-      gainScore();
-      updateProgressAfterCorrect();
-      unlockComboAchievements();
-      return;
-    }
-
-    state.wrong += 1;
-    state.currentCombo = 0;
-    updateComboDisplay();
-
-    if (state.lives !== Infinity) {
-      state.lives = Math.max(0, state.lives - 1);
-      updateLivesUI();
-    }
-
-    updateAccuracyUI();
-    state.feedbackLock = true;
-
-    const correctTile = els.grid.children[state.oddIndex];
-    tile.classList.add("wrong-answer-feedback");
-
-    setTimeout(() => {
-      tile.classList.remove("wrong-answer-feedback");
-
-      if (window.glimpseCorrectThenContinue) {
-        window.glimpseCorrectThenContinue(correctTile, finishWrongAnswerTurn, {
-          glimpseMs: 500,
-          delayBefore: 80
-        });
-      } else {
-        if (correctTile) correctTile.classList.add("correct-glimpse");
-        setTimeout(() => {
-          if (correctTile) correctTile.classList.remove("correct-glimpse");
-          finishWrongAnswerTurn();
-        }, 500);
-      }
-    }, 220);
-  }
-
-  function unlockComboAchievements() {
-    if (state.currentCombo >= 5) unlockAchievement("combo_5", "5 Combo", "✨", { combo: 5 });
-    if (state.currentCombo >= 10) unlockAchievement("combo_10", "10 Combo", "🔥", { combo: 10 });
-    if (state.currentCombo >= 20) unlockAchievement("combo_20", "20 Combo", "⚡", { combo: 20 });
-    if (state.currentCombo >= 30) unlockAchievement("perfect_run_30", "Perfect Run", "🏆", { combo: 30 });
-    if (state.currentCombo >= 50) unlockAchievement("combo_50", "50 Combo", "🚀", { combo: 50 });
-    if (state.currentCombo >= 75) unlockAchievement("combo_75", "75 Combo", "💎", { combo: 75 });
-    if (state.currentCombo >= 100) unlockAchievement("combo_100", "100 Combo", "👑", { combo: 100 });
-  }
-
-  function unlockAchievement(id, title, emoji, extra = {}) {
-    const profile = getCurrentProfile();
-    if (!profile.achievements) profile.achievements = [];
-
-    const existing = profile.achievements.find(entry => entry.id === id);
-    if (existing) {
-      if (extra.incrementCount) {
-        existing.count = (existing.count || 1) + 1;
-        existing.lastAchieved = new Date().toISOString();
-        saveProfiles();
-        showCombo(`${emoji} ${title} x${existing.count}`, 1200);
-      }
-      return;
-    }
-
-    profile.achievements.push({
-      id,
-      title,
-      emoji,
-      combo: extra.combo || null,
-      count: extra.count || 1,
-      date: new Date().toISOString(),
-      lastAchieved: new Date().toISOString()
-    });
-
-    saveProfiles();
-    showCombo(`${emoji} Achievement!`, 1000);
-  }
-
-  function updateModeBadge() {
-    if (state.mode === "relaxed") {
-      els.resultsModeBadge.style.display = "inline-block";
-      els.resultsModeBadge.textContent = "Relaxed";
-    } else {
-      els.resultsModeBadge.style.display = "none";
-      els.resultsModeBadge.textContent = "";
-    }
-  }
-
-  function showResultsOverlay(messageOnly = false) {
-    const profile = getCurrentProfile();
-    const stats = profile.stats[state.mode] || createDefaultStats()[state.mode];
-    const rank = getCurrentRankForMode(state.mode);
-    setRankPill(els.leaderboardRank[state.mode], rank);
-
-    els.resultsOverlay.querySelector(".overlay-card").classList.toggle("relaxed", state.mode === "relaxed");
-    els.resultsTitle.textContent = state.mode === "relaxed" ? "Time's up!" : "Results";
-    updateModeBadge();
-
-    const total = state.correct + state.wrong;
-    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
-
-    if (state.mode === "relaxed") {
-      els.resultsScore.textContent = `Score: ${state.score} — Best: ${stats.bestScore || 0}`;
-      els.resultsAccuracy.textContent = "";
-      els.resultsLevel.textContent = `Level Reached: ${state.level}`;
-      els.resultsBest.textContent = `Mistakes do not end relaxed runs.`;
-    } else {
-      els.resultsScore.textContent = `Score: ${state.score}`;
-      els.resultsAccuracy.textContent = `Accuracy: ${pct}% (${state.correct}/${total})`;
-      els.resultsLevel.textContent = `Level Reached: ${state.level}`;
-      els.resultsBest.textContent = `Best Score: ${stats.bestScore || 0} • Best Level: ${stats.bestLevel || 1}`;
-    }
-
-    els.resultsOverlay.style.display = "flex";
-    els.startBtn.style.display = "inline-block";
-    state.running = false;
-    state.paused = false;
-    clearInterval(state.timer);
-    updateButtons();
-    if (!messageOnly) {
-      // keep legacy behaviour hooks available
-    }
-  }
-
-  function endSession(reason) {
-    if (!state.running) return;
-    clearInterval(state.timer);
-    state.running = false;
-    state.paused = false;
-    state.feedbackLock = false;
-
-    const total = state.correct + state.wrong;
-    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
-
-    if (pct === 100 && total > 0) {
-      unlockAchievement("accuracy_100", "100% Accuracy", "🎯", { incrementCount: true });
-    }
-
-    recordRun(state.mode, pct);
-
-    if (state.mode === "relaxed") {
-      showResultsOverlay(true);
-    } else if (window.explodeAllThenShowStats) {
-      window.explodeAllThenShowStats(() => {
-        showResultsOverlay(false);
-      }, {
-        selector: ".tile",
-        duration: 600,
-        distance: 300,
-        popBefore: true
-      });
-    } else {
-      showResultsOverlay(false);
-    }
-  }
-
-  function tickTimer() {
-    if (!state.running || state.paused) return;
-
-    if (state.mode === "daily") {
-      const today = getLocalDateKey();
-      if (today !== state.dailyDateKey) {
-        state.dailyDateKey = today;
-        state.dailyHue = getDailyHue(today);
-        applyDailyAccent();
-      }
-    }
-
-    state.remaining -= 1;
-    updateTimerUI();
-
-    if (state.remaining <= 0) {
-      endSession("time");
-    }
-  }
-
-  function startSession(nextMode = state.mode) {
-    if (!MODE_CONFIG[nextMode]) nextMode = "classic";
-
-    clearInterval(state.timer);
-    hideAllOverlays();
-
-    if (nextMode === "daily") {
-      state.dailyDateKey = getLocalDateKey();
-      state.dailyHue = getDailyHue(state.dailyDateKey);
-    }
-
-    state.mode = nextMode;
-    applyDailyAccent();
-    updateModeButtons();
-
-    const config = MODE_CONFIG[state.mode];
+  const MODE = {
+    relaxed: { time: 120, lives: Infinity },
+    classic: { time: 60, lives: 3 },
+    extreme: { time: 30, lives: 1 },
+    daily: { time: 60, lives: 3 }
+  };
+
+  function start() {
+    reset();
     state.running = true;
-    state.paused = false;
-    state.feedbackLock = false;
+    const cfg = MODE[state.mode];
+    state.remaining = cfg.time;
+    state.lives = cfg.lives;
 
+    tick();
+    state.timer = setInterval(tick, 1000);
+    nextLevel();
+  }
+
+  function reset() {
+    clearInterval(state.timer);
     state.level = 1;
     state.score = 0;
     state.correct = 0;
     state.wrong = 0;
-    state.lives = config.lives;
-    state.remaining = config.timerSeconds;
-    state.currentCombo = 0;
-    state.maxCombo = 0;
-    state.lastClickTime = null;
+    state.combo = 0;
 
-    els.scoreValue.textContent = "0";
-    updateAccuracyUI();
-    updateLivesUI();
-    updateTimerUI();
-    updateComboDisplay();
-    syncPersonalBestsToUI();
-
-    els.startBtn.style.display = "none";
-    updateButtons();
-
-    showFlash(`${config.label} mode`, 600);
-    createPuzzle();
-
-    state.timer = setInterval(tickTimer, 1000);
+    els.score.textContent = 0;
+    els.accuracy.textContent = "0%";
+    els.lives.textContent = "❤️❤️❤️";
   }
 
-  function updateButtons() {
-    const showGameButtons = state.running;
-    els.pauseBtn.style.display = showGameButtons ? "inline-block" : "none";
-    els.restartBtn.style.display = showGameButtons ? "inline-block" : "none";
-    els.leaderboardBtn.style.display = "inline-block";
-    els.achievementsBtn.style.display = "inline-block";
+  function tick() {
+    if (!state.running) return;
+    state.remaining--;
+    els.timer.textContent = format(state.remaining);
+    if (state.remaining <= 0) end();
   }
 
-  function pauseGame() {
-    if (!state.running || state.paused) return;
-    state.paused = true;
-    els.pauseOverlay.style.display = "flex";
+  function format(s) {
+    const m = String(Math.floor(s / 60)).padStart(2, "0");
+    const r = String(s % 60).padStart(2, "0");
+    return `${m}:${r}`;
   }
 
-  function continueGame() {
-    if (!state.paused) return;
-    state.paused = false;
-    els.pauseOverlay.style.display = "none";
-  }
+  function nextLevel() {
+    const size = Math.min(2 + Math.floor(state.level / 3), 6);
+    const total = size * size;
 
-  function hideAllOverlays() {
-    els.pauseOverlay.style.display = "none";
-    els.resultsOverlay.style.display = "none";
-    els.leaderboardOverlay.style.display = "none";
-    els.nameOverlay.style.display = "none";
-    els.profileOverlay.style.display = "none";
-    els.achievementsOverlay.style.display = "none";
-  }
+    els.grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    els.grid.innerHTML = "";
 
-  function renderLeaderboard(mode = state.mode) {
-    if (!MODE_CONFIG[mode]) mode = "classic";
+    state.oddIndex = Math.floor(Math.random() * total);
 
-    Array.from(els.leaderboardTabs).forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.lbTab === mode);
-    });
+    const base = randomColor();
+    const odd = randomColor(true);
 
-    Object.entries(els.leaderboardPanels).forEach(([m, panel]) => {
-      panel.classList.toggle("active", m === mode);
-    });
-
-    const profile = getCurrentProfile();
-    const stats = profile.stats[mode] || createDefaultStats()[mode];
-    const rank = getCurrentRankForMode(mode);
-
-    setRankPill(els.leaderboardRank[mode], rank);
-    els.leaderboardSummary[mode].textContent =
-      mode === "relaxed"
-        ? `Personal best: ${stats.bestScore || 0} pts • Level ${stats.bestLevel || 1}`
-        : `Best run: ${stats.bestScore || 0} pts • Level ${stats.bestLevel || 1}`;
-
-    els.leaderboardReset[mode].textContent = formatResetText(mode);
-    els.leaderboardUsername[mode].textContent = `Current name: ${profile.username}`;
-
-    const runsEl = els.leaderboardRuns[mode];
-    runsEl.innerHTML = "";
-
-    if (mode === "relaxed") {
-      if ((stats.bestScore || 0) === 0) {
-        runsEl.textContent = "Play a Relaxed run to save your best score here.";
-      } else {
-        const item = document.createElement("div");
-        item.className = "lb-run-row";
-        item.innerHTML = `
-          <div class="lb-run-label">
-            <span>Best</span>
-            <span>${stats.bestScore || 0} pts • L${stats.bestLevel || 1}</span>
-          </div>
-          <div class="lb-bar-outer"><div class="lb-bar-inner" style="width:100%;background:#22c55e"></div></div>
-        `;
-        runsEl.appendChild(item);
-      }
-      return;
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement("div");
+      d.className = "tile";
+      d.style.background = i === state.oddIndex ? odd : base;
+      d.onclick = () => click(i);
+      els.grid.appendChild(d);
     }
 
-    const board = getModeLeaderboardData(mode);
-    const runs = [...(board.runs || [])].sort((a, b) => b.score - a.score || b.level - a.level || b.accuracy - a.accuracy);
+    els.level.textContent = "Level " + state.level;
+  }
 
-    if (runs.length === 0) {
-      runsEl.textContent = mode === "daily"
-        ? "No runs yet today. Play to create today’s board."
-        : `No ${MODE_CONFIG[mode].label.toLowerCase()} runs yet.`;
-      return;
+  function click(i) {
+    if (!state.running) return;
+
+    if (i === state.oddIndex) {
+      state.correct++;
+      state.combo++;
+      state.score += 10 + state.level;
+      els.score.textContent = state.score;
+      flash("+score");
+      state.level++;
+      nextLevel();
+    } else {
+      state.wrong++;
+      state.combo = 0;
+      state.lives--;
+      updateLives();
+      if (state.lives <= 0) end();
     }
 
-    const maxScore = Math.max(...runs.map(r => r.score), 1);
-
-    runs.forEach((run, idx) => {
-      const row = document.createElement("div");
-      row.className = "lb-run-row";
-
-      const label = document.createElement("div");
-      label.className = "lb-run-label";
-      label.innerHTML = `
-        <span>#${idx + 1}</span>
-        <span>${run.name || "Player"} • ${run.score} pts • L${run.level} • ${run.accuracy}%</span>
-      `;
-
-      const barOuter = document.createElement("div");
-      barOuter.className = "lb-bar-outer";
-
-      const barInner = document.createElement("div");
-      barInner.className = "lb-bar-inner";
-
-      const width = Math.max(5, (run.score / maxScore) * 100);
-      barInner.style.width = `${width}%`;
-
-      let color = "#f97373";
-      if (run.accuracy >= 80) color = "#22c55e";
-      else if (run.accuracy >= 60) color = "#eab308";
-
-      barInner.style.background = color;
-      barOuter.appendChild(barInner);
-
-      row.appendChild(label);
-      row.appendChild(barOuter);
-      runsEl.appendChild(row);
-    });
+    updateAccuracy();
   }
 
-  function switchLeaderboardTab(mode) {
-    renderLeaderboard(mode);
+  function updateAccuracy() {
+    const total = state.correct + state.wrong;
+    const pct = total ? Math.round((state.correct / total) * 100) : 0;
+    els.accuracy.textContent = pct + "%";
   }
 
-  function renderProfileList() {
-    els.profileList.innerHTML = "";
-    const profiles = Object.values(state.profiles.profiles);
-
-    profiles.forEach(profile => {
-      const btn = document.createElement("button");
-      btn.className = "profile-btn" + (profile.id === state.currentProfileId ? " active" : "");
-      btn.textContent = profile.username;
-      btn.addEventListener("click", () => {
-        setActiveProfile(profile.id);
-        renderProfileList();
-      });
-      els.profileList.appendChild(btn);
-    });
-
-    els.addProfileBtn.style.display = profiles.length >= 3 ? "none" : "block";
+  function updateLives() {
+    els.lives.textContent = state.lives === Infinity ? "∞" : "❤️".repeat(state.lives);
   }
 
-  function showProfileOverlay() {
-    renderProfileList();
-    els.profileOverlay.style.display = "flex";
+  function randomColor(odd = false) {
+    const h = Math.floor(Math.random() * 360);
+    const l = odd ? 65 : 50;
+    return `hsl(${h},70%,${l}%)`;
   }
 
-  function hideProfileOverlay() {
-    els.profileOverlay.style.display = "none";
+  function flash(t) {
+    els.flash.textContent = t;
+    setTimeout(() => els.flash.textContent = "", 400);
   }
 
-  function renderAchievements() {
-    const profile = getCurrentProfile();
-    const ach = profile.achievements || [];
-    els.achList.innerHTML = "";
-
-    if (ach.length === 0) {
-      els.achList.textContent = "No achievements yet. Finish clean runs or build combos to unlock them.";
-      return;
-    }
-
-    ach.slice().reverse().forEach(entry => {
-      const card = document.createElement("div");
-      card.className = entry.medal ? `medal-card medal-${entry.medal}` : "medal-card medal-gold";
-
-      if (entry.medal) {
-        const icon = entry.medal === "gold" ? "🥇" : entry.medal === "silver" ? "🥈" : "🥉";
-        const title = document.createElement("div");
-        title.className = "medal-title";
-        title.textContent = `${icon} ${entry.medal.toUpperCase()} MEDAL`;
-
-        const date = document.createElement("div");
-        date.className = "medal-date";
-        date.textContent = new Date(entry.weekStart || Date.now()).toLocaleDateString();
-
-        card.appendChild(title);
-        card.appendChild(date);
-      } else {
-        const title = document.createElement("div");
-        title.className = "medal-title";
-        title.textContent = `${entry.emoji} ${entry.title}`;
-
-        const details = document.createElement("div");
-        details.className = "medal-date";
-        const firstDate = entry.date ? new Date(entry.date).toLocaleDateString() : "Unknown date";
-        details.textContent = entry.combo ? `Combo required: ${entry.combo} • First achieved: ${firstDate}` : `First achieved: ${firstDate}`;
-
-        card.appendChild(title);
-        card.appendChild(details);
-
-        if (entry.id === "accuracy_100" && entry.count && entry.count > 1) {
-          const countBadge = document.createElement("div");
-          countBadge.textContent = `x${entry.count}`;
-          countBadge.style.position = "absolute";
-          countBadge.style.top = "8px";
-          countBadge.style.right = "10px";
-          countBadge.style.fontWeight = "800";
-          countBadge.style.fontSize = "13px";
-          countBadge.style.background = "rgba(17, 24, 39, 0.18)";
-          countBadge.style.padding = "2px 7px";
-          countBadge.style.borderRadius = "999px";
-          card.style.position = "relative";
-          card.appendChild(countBadge);
-        }
-      }
-
-      els.achList.appendChild(card);
-    });
+  function end() {
+    state.running = false;
+    clearInterval(state.timer);
+    alert("Game over! Score: " + state.score);
   }
 
-  function setUsername(newName) {
-    const trimmed = String(newName || "").trim();
-    if (!trimmed) return;
-    const profile = getCurrentProfile();
-    profile.username = trimmed;
-    saveProfiles();
-  }
+  els.start.onclick = start;
+  els.restart.onclick = start;
+  els.pause.onclick = () => state.running = false;
 
-  function unlockAchievement(id, title, emoji, extra = {}) {
-    const profile = getCurrentProfile();
-    if (!profile.achievements) profile.achievements = [];
+  els.themeToggle.onclick = () => document.body.classList.toggle("dark");
 
-    const existing = profile.achievements.find(entry => entry.id === id);
-    if (existing) {
-      if (extra.incrementCount) {
-        existing.count = (existing.count || 1) + 1;
-        existing.lastAchieved = new Date().toISOString();
-        saveProfiles();
-        showCombo(`${emoji} ${title} x${existing.count}`, 1200);
-      }
-      return;
-    }
+  els.modeButtons.forEach(b => {
+    b.onclick = () => state.mode = b.dataset.mode;
+  });
 
-    profile.achievements.push({
-      id,
-      title,
-      emoji,
-      combo: extra.combo || null,
-      count: extra.count || 1,
-      date: new Date().toISOString(),
-      lastAchieved: new Date().toISOString()
-    });
-
-    saveProfiles();
-    showCombo(`${emoji} Achievement!`, 1000);
-  }
-
-  function updateCurrentBestViewAfterModeChange() {
-    if (state.mode === "daily") resetDailyStoreIfNeeded();
-    syncPersonalBestsToUI();
-  }
-
-  function attachEvents() {
-    els.themeToggle.addEventListener("click", toggleTheme);
-    els.pauseBtn.addEventListener("click", pauseGame);
-    els.continueBtn.addEventListener("click", continueGame);
-    els.startBtn.addEventListener("click", () => startSession(state.mode));
-    els.restartBtn.addEventListener("click", () => startSession(state.mode));
-    els.playAgainBtn.addEventListener("click", () => startSession(state.mode));
-    els.leaderboardBtn.addEventListener("click", () => {
-      renderLeaderboard(state.mode);
-      els.leaderboardOverlay.style.display = "flex";
-    });
-    els.achievementsBtn.addEventListener("click", () => {
-      renderAchievements();
-      els.achievementsOverlay.style.display = "flex";
-    });
-    els.resultsLeaderboardBtn.addEventListener("click", () => {
-      els.resultsOverlay.style.display = "none";
-      renderLeaderboard(state.mode);
-      els.leaderboardOverlay.style.display = "flex";
-    });
-    els.resultsAchievementsBtn.addEventListener("click", () => {
-      els.resultsOverlay.style.display = "none";
-      renderAchievements();
-      els.achievementsOverlay.style.display = "flex";
-    });
-    els.lbCloseBtn.addEventListener("click", () => els.leaderboardOverlay.style.display = "none");
-    els.lbNameBtn.addEventListener("click", () => {
-      els.nameInput.value = getCurrentProfile().username || "";
-      els.nameOverlay.style.display = "flex";
-    });
-    els.lbProfileBtn.addEventListener("click", showProfileOverlay);
-    els.nameSaveBtn.addEventListener("click", () => {
-      setUsername(els.nameInput.value);
-      els.nameOverlay.style.display = "none";
-      renderProfileList();
-    });
-    els.addProfileBtn.addEventListener("click", () => {
-      const count = Object.keys(state.profiles.profiles).length;
-      if (count >= 3) return;
-      const profile = createProfile();
-      state.profiles.profiles[profile.id] = profile;
-      setActiveProfile(profile.id);
-      renderProfileList();
-    });
-    els.profileCloseBtn.addEventListener("click", hideProfileOverlay);
-    els.achCloseBtn.addEventListener("click", () => els.achievementsOverlay.style.display = "none");
-
-    els.modeRow.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", () => setMode(btn.dataset.mode, true));
-    });
-
-    els.leaderboardTabs.forEach(btn => {
-      btn.addEventListener("click", () => switchLeaderboardTab(btn.dataset.lbTab));
-    });
-
-    [els.nameOverlay, els.profileOverlay, els.achievementsOverlay, els.leaderboardOverlay, els.pauseOverlay].forEach(overlay => {
-      overlay.addEventListener("click", e => {
-        if (e.target !== overlay) return;
-        if (overlay === els.pauseOverlay) continueGame();
-        else overlay.style.display = "none";
-      });
-    });
-
-    window.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        if (els.pauseOverlay.style.display === "flex") continueGame();
-        else hideAllOverlays();
-      }
-      if (e.key.toLowerCase() === "p") {
-        if (state.running && !state.paused) pauseGame();
-        else if (state.paused) continueGame();
-      }
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && state.running && !state.paused) {
-        pauseGame();
-      }
-    });
-  }
-
-  function syncDailyModeAtStart() {
-    if (state.mode === "daily") {
-      resetDailyStoreIfNeeded();
-      state.dailyHue = getDailyHue(state.dailyDateKey);
-      applyDailyAccent();
-    }
-  }
-
-  function init() {
-    setThemeFromStorage();
-    loadProfiles();
-    loadBoards();
-    state.dailyDateKey = getLocalDateKey();
-    state.dailyHue = getDailyHue(state.dailyDateKey);
-    state.mode = "relaxed";
-    applyDailyAccent();
-    updateModeButtons();
-    syncPersonalBestsToUI();
-    updateTimerUI();
-    updateAccuracyUI();
-    updateLivesUI();
-    updateButtons();
-    attachEvents();
-    if (Object.keys(state.profiles.profiles).length > 1) {
-      showProfileOverlay();
-    }
-  }
-
-  window.setGameMode = setMode;
-  window.switchLbTab = switchLeaderboardTab;
-
-  init();
 })();
 </script>
+
 </body>
 </html>
