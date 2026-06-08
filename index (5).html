@@ -1046,7 +1046,41 @@ function getDelta(level) {
 function hsl(h, s, l) {
   return `hsl(${h}, ${s}%, ${l}%)`;
 }
+  
+function setDailySeed() {
+  const today = new Date().toISOString().slice(0, 10);
+  dailySeed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
 
+function seededRandom() {
+  dailySeed = (dailySeed * 9301 + 49297) % 233280;
+  return dailySeed / 233280;
+}
+
+function gameRandom() {
+  return dailyChallengeActive ? seededRandom() : Math.random();
+}
+  
+function setGameMode(mode) {
+  if (gameActive) return;
+
+  gameMode = mode;
+  dailyChallengeActive = mode === "daily";
+
+  if (mode === "relaxed") {
+    sessionSeconds = 90;
+  } else if (mode === "classic") {
+    sessionSeconds = 60;
+  } else if (mode === "extreme") {
+    sessionSeconds = 30;
+  } else if (mode === "daily") {
+    sessionSeconds = 60;
+  }
+
+  showGameFlash(`${mode.toUpperCase()} mode`, 900);
+  updateTimer();
+}
+  
 function hideAllOverlays() {
   pauseOverlay.style.display = "none";
   resultsOverlay.style.display = "none";
