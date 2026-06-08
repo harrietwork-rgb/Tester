@@ -8,7 +8,7 @@
   gtag("js", new Date());
   gtag("config", "G-NFRD369Q9E", { send_page_view: true });
 </script>
-
+  
 <meta charset="UTF-8">
 <title>Colour Focus - Perception Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,35 +45,28 @@ body {
   color: var(--text-main);
   display: flex;
   justify-content: center;
-  padding: 20px 20px 100px;
-  transition: background 0.3s, color 0.3s;
+  padding: 12px 12px 120px;
 }
 
 .app {
   width: 100%;
   max-width: 420px;
-  background: var(--bg);
-  padding: 16px;
+  padding: 14px;
   border-radius: 16px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  transition: background 0.3s, border 0.3s;
 }
 
 header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 10px;
   position: relative;
+  margin-bottom: 10px;
 }
 
 h1 {
   font-size: 20px;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-soft);
 }
 
@@ -83,45 +76,35 @@ h1 {
   top: 0;
 }
 
+/* TOP STATS */
 .top-row {
   display: flex;
-  justify-content: space-between;
-  margin: 12px 0;
   gap: 8px;
+  margin: 10px 0;
 }
 
 .box {
+  flex: 1;
   background: var(--box-bg);
   padding: 10px;
   border-radius: 12px;
-  width: 50%;
   text-align: center;
   border: 1px solid var(--border);
-  box-sizing: border-box;
 }
 
 .box-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-soft);
-  margin-bottom: 4px;
 }
 
 #timer-value {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--accent);
-}
-
-#score-value,
-#best-score-value,
-#best-level-value {
-  font-size: 20px;
-  font-weight: 600;
 }
 
 .mid-row {
   display: flex;
-  justify-content: space-between;
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -133,408 +116,136 @@ h1 {
   padding: 8px;
   border: 1px solid var(--border);
   text-align: center;
-  font-size: 13px;
-}
-
-#accuracy,
-#level-label {
-  color: var(--text-soft);
-}
-
-#lives {
-  font-size: 20px;
-  letter-spacing: 1px;
-}
-
-#level-label {
-  font-size: 14px;
-  margin: 6px 0 4px;
-  min-height: 20px;
-}
-
-.game-flash {
-  min-height: 28px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--accent);
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 180ms ease-out, transform 180ms ease-out;
-  pointer-events: none;
-}
-
-.game-flash.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.combo-display {
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  padding: 6px 14px;
-  background: rgba(17, 24, 39, 0.72);
-  border-radius: 999px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 200ms ease-out;
-  z-index: 999;
+  font-size: 12px;
 }
 
 .grid {
   display: grid;
   gap: 6px;
-  margin: 10px 0 14px;
+  margin: 10px 0 8px;
 }
 
 .tile {
   width: 100%;
   padding-bottom: 100%;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   border: 1px solid var(--border);
-  box-sizing: border-box;
-  transition: transform 120ms ease-out, filter 120ms ease-out;
+  transition: transform 0.1s ease;
 }
 
 .tile:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
-.tile.wrong-answer-feedback {
-  filter: brightness(1.22) saturate(1.2);
-}
-
-.tile.correct-glimpse {
-  outline: 2px solid #22c55e;
-  outline-offset: 1px;
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
+#level-label {
+  text-align: center;
   font-weight: 600;
-  font-size: 13px;
-  white-space: nowrap;
+  margin: 6px 0;
+}
+
+.game-flash {
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+  min-height: 20px;
+}
+
+.combo-display {
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  opacity: 0;
+}
+  
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.controls button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .primary {
   background: var(--accent);
-  color: #ffffff;
+  color: #fff;
 }
 
 .ghost {
   background: var(--box-bg);
-  color: var(--text-main);
   border: 1px solid var(--border);
+  color: var(--text-main);
 }
 
 .mode-row {
   position: fixed;
+  bottom: 10px;
   left: 50%;
-  bottom: 12px;
   transform: translateX(-50%);
-  width: min(420px, calc(100vw - 24px));
+  width: min(420px, calc(100vw - 20px));
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 6px;
-  z-index: 70;
   padding: 10px;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.8);
   backdrop-filter: blur(10px);
-}
-
-.mode-row button {
-  width: 100%;
-  padding: 10px 0;
-}
-
-.mode-row button.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-}
-
-#pause-overlay,
-#results-overlay,
-#leaderboard-overlay,
-#name-overlay,
-#profile-overlay,
-#achievements-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.12);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 50;
-}
-
-.overlay-card {
-  background: var(--box-bg);
-  border-radius: 16px;
-  padding: 18px 16px;
-  max-width: 360px;
-  width: 100%;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
   border: 1px solid var(--border);
-  text-align: center;
 }
 
-.overlay-card h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
-}
-
-.overlay-card p {
-  margin: 4px 0;
-  font-size: 13px;
-  color: var(--text-soft);
-}
-
-.overlay-card button {
-  margin-top: 10px;
-}
-
-#results-overlay .overlay-card.relaxed {
-  max-width: 300px;
-  padding: 18px 14px;
-}
-
-#results-overlay .overlay-card.relaxed p {
-  font-size: 14px;
-}
-
-.rank-pill {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: #111827;
-}
-
-.rank-bronze { background: #d97757; color: #111827; }
-.rank-silver { background: #e5e7eb; color: #111827; }
-.rank-gold { background: #facc15; color: #111827; }
-.rank-diamond { background: #bfdbfe; color: #1e3a8a; }
-.rank-master { background: #c4b5fd; color: #4c1d95; }
-
-.lb-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.lb-tab {
-  padding: 8px 6px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--box-bg);
-  color: var(--text-main);
-}
-
-.lb-tab.active {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-.lb-panel {
-  display: none;
-}
-
-.lb-panel.active {
-  display: block;
-}
-
-.lb-meta {
-  font-size: 12px;
-  color: var(--text-soft);
-  margin-bottom: 8px;
-}
-
-.lb-runs,
-.lb-global-list {
-  margin-top: 8px;
-  max-height: 240px;
-  overflow-y: auto;
-  text-align: left;
-  font-size: 12px;
-}
-
-.lb-run-row {
-  margin: 6px 0;
-}
-
-.lb-run-label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2px;
-  gap: 4px;
-}
-
-.lb-run-label span {
-  white-space: nowrap;
-}
-
-.lb-run-label span:last-child {
-  margin-left: auto;
-}
-
-.lb-bar-outer {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  overflow: hidden;
-}
-
-.lb-bar-inner {
-  height: 100%;
-  border-radius: 999px;
-}
-
-.name-input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  font-size: 14px;
-  margin-top: 8px;
-  box-sizing: border-box;
-  background: var(--bg);
-  color: var(--text-main);
-}
-
-.profile-list,
-.ach-list {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.profile-btn {
-  width: 100%;
-  text-align: left;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--box-bg);
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-main);
-}
-
-.profile-btn.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.ach-list {
-  max-height: 260px;
-  overflow-y: auto;
-  text-align: left;
-  font-size: 13px;
-}
-
-.medal-card {
-  border-radius: 12px;
-  padding: 10px 12px;
-  color: #111827;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
-}
-
-.medal-gold { background: #facc15; }
-.medal-silver { background: #e5e7eb; }
-.medal-bronze { background: #d97757; }
-
-.medal-title {
-  font-weight: 700;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.medal-date {
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.mode-badge {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
+body.dark .mode-row {
+  background: rgba(15, 23, 42, 0.8);
 }
 
 @media (max-width: 420px) {
+
   body {
-    padding: 14px 14px 108px;
+    padding: 10px 10px 130px;
   }
 
-  .app {
-    padding: 14px;
-  }
-
-  .controls button {
-    flex: 1 1 calc(50% - 6px);
+  .controls {
+    grid-template-columns: 1fr 1fr;
   }
 
   .mode-row {
-    width: calc(100vw - 18px);
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .lb-tabs {
-    grid-template-columns: repeat(2, 1fr);
+  .top-row, .mid-row {
+    gap: 6px;
+  }
+
+  .tile {
+    border-radius: 8px;
   }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
+
   <header>
     <h1>Colour Focus</h1>
-    <div class="subtitle">Tap the lighter square as quickly and accurately as you can.</div>
+    <div class="subtitle">Tap the lighter square as quickly as possible</div>
     <button id="theme-toggle">🌙</button>
   </header>
 
   <div class="top-row">
     <div class="box">
-      <div class="box-label" id="best-score-label">Best Score</div>
+      <div class="box-label">Best Score</div>
       <div id="best-score-value">0</div>
     </div>
     <div class="box">
-      <div class="box-label" id="best-level-label">Best Level</div>
+      <div class="box-label">Best Level</div>
       <div id="best-level-value">1</div>
     </div>
   </div>
@@ -551,139 +262,34 @@ button {
   </div>
 
   <div class="mid-row">
-    <div class="mid-box">
-      <div class="box-label">Accuracy</div>
-      <div id="accuracy">0% (0 / 0)</div>
-    </div>
-    <div class="mid-box">
-      <div class="box-label">Lives</div>
-      <div id="lives">❤️❤️❤️</div>
-    </div>
+    <div class="mid-box">Accuracy <div id="accuracy">0%</div></div>
+    <div class="mid-box">Lives <div id="lives">❤️❤️❤️</div></div>
   </div>
 
   <div id="level-label">Level 1</div>
-  <div id="game-flash" class="game-flash"></div>
-  <div id="comboDisplay" class="combo-display">Combo x1</div>
+  <div id="game-flash"></div>
+  <div id="comboDisplay"></div>
+
   <div id="grid" class="grid"></div>
+
+  <!-- MOVED HERE (IMPORTANT CHANGE) -->
+  <div class="controls">
+    <button id="start-btn" class="primary">Start</button>
+    <button id="restart-btn" class="ghost">Restart</button>
+  </div>
 
   <div class="controls">
     <button id="pause-btn" class="ghost">Pause</button>
-    <button id="restart-btn" class="ghost">Restart</button>
-    <button id="start-btn" class="primary">Play</button>
     <button id="leaderboard-btn" class="ghost">Leaderboard</button>
-    <button id="achievements-btn" class="ghost">Achievements</button>
   </div>
+
 </div>
 
-<div class="mode-row" id="mode-row">
-  <button class="ghost active" data-mode="relaxed">Relaxed</button>
-  <button class="ghost" data-mode="classic">Classic</button>
-  <button class="ghost" data-mode="extreme">Extreme</button>
-  <button class="ghost" data-mode="daily">Daily</button>
-</div>
-
-<div id="pause-overlay">
-  <div class="overlay-card">
-    <h2>Paused</h2>
-    <p>Take a breather. Tap continue when you're ready.</p>
-    <button id="continue-btn" class="primary">Continue</button>
-  </div>
-</div>
-
-<div id="results-overlay">
-  <div class="overlay-card">
-    <h2 id="results-title">Results</h2>
-    <div id="results-mode-badge" class="mode-badge" style="display:none;"></div>
-    <p id="results-score"></p>
-    <p id="results-accuracy"></p>
-    <p id="results-level"></p>
-    <p id="results-best"></p>
-
-    <button id="play-again-btn" class="primary">Play Again</button>
-    <button id="results-leaderboard-btn" class="ghost">Leaderboard</button>
-    <button id="results-achievements-btn" class="ghost">Achievements</button>
-  </div>
-</div>
-
-<div id="leaderboard-overlay">
-  <div class="overlay-card">
-    <h2>Leaderboard</h2>
-
-    <div class="lb-tabs">
-      <button class="lb-tab active" data-lb-tab="classic">Classic</button>
-      <button class="lb-tab" data-lb-tab="extreme">Extreme</button>
-      <button class="lb-tab" data-lb-tab="daily">Daily</button>
-      <button class="lb-tab" data-lb-tab="relaxed">Relaxed</button>
-    </div>
-
-    <div id="lb-panel-classic" class="lb-panel active">
-      <div id="lb-rank-pill-classic" class="rank-pill rank-bronze">BRONZE</div>
-      <p id="lb-summary-classic"></p>
-      <p id="lb-reset-classic"></p>
-      <p id="lb-username-classic"></p>
-      <div class="lb-meta">Top runs in Classic mode:</div>
-      <div id="lb-runs-classic" class="lb-runs"></div>
-    </div>
-
-    <div id="lb-panel-extreme" class="lb-panel">
-      <div id="lb-rank-pill-extreme" class="rank-pill rank-bronze">BRONZE</div>
-      <p id="lb-summary-extreme"></p>
-      <p id="lb-reset-extreme"></p>
-      <p id="lb-username-extreme"></p>
-      <div class="lb-meta">Top runs in Extreme mode:</div>
-      <div id="lb-runs-extreme" class="lb-runs"></div>
-    </div>
-
-    <div id="lb-panel-daily" class="lb-panel">
-      <div id="lb-rank-pill-daily" class="rank-pill rank-bronze">BRONZE</div>
-      <p id="lb-summary-daily"></p>
-      <p id="lb-reset-daily"></p>
-      <p id="lb-username-daily"></p>
-      <div class="lb-meta">Top runs for today:</div>
-      <div id="lb-runs-daily" class="lb-runs"></div>
-    </div>
-
-    <div id="lb-panel-relaxed" class="lb-panel">
-      <div id="lb-rank-pill-relaxed" class="rank-pill rank-bronze">RELAXED</div>
-      <p id="lb-summary-relaxed"></p>
-      <p id="lb-reset-relaxed"></p>
-      <p id="lb-username-relaxed"></p>
-      <div class="lb-meta">Relaxed mode keeps only your personal best.</div>
-      <div id="lb-runs-relaxed" class="lb-runs"></div>
-    </div>
-
-    <button id="lb-name-btn" class="ghost">Change name</button>
-    <button id="lb-profile-btn" class="ghost">Switch profile</button>
-    <button id="lb-close-btn" class="primary">Close</button>
-  </div>
-</div>
-
-<div id="name-overlay">
-  <div class="overlay-card">
-    <h2>Set Your Name</h2>
-    <p>Choose the name that appears on your leaderboard.</p>
-    <input id="name-input" class="name-input" maxlength="20">
-    <button id="name-save-btn" class="primary">Save</button>
-  </div>
-</div>
-
-<div id="profile-overlay">
-  <div class="overlay-card">
-    <h2>Select Profile</h2>
-    <p>You can have up to 3 profiles on this device.</p>
-    <div id="profile-list" class="profile-list"></div>
-    <button id="add-profile-btn" class="ghost">Add profile</button>
-    <button id="profile-close-btn" class="primary">Close</button>
-  </div>
-</div>
-
-<div id="achievements-overlay">
-  <div class="overlay-card">
-    <h2>Achievements</h2>
-    <p>Your permanent achievements on this device.</p>
-    <div id="ach-list" class="ach-list"></div>
-    <button id="ach-close-btn" class="primary">Close</button>
-  </div>
+<div class="mode-row">
+  <button data-mode="relaxed" class="ghost active">Relaxed</button>
+  <button data-mode="classic" class="ghost">Classic</button>
+  <button data-mode="extreme" class="ghost">Extreme</button>
+  <button data-mode="daily" class="ghost">Daily</button>
 </div>
 
 <script src="scripts/explosion-and-feedback.js"></script>
