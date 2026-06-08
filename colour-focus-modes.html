@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NFRD369Q9E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-NFRD369Q9E", { send_page_view: true });
+</script>
+
+<meta charset="UTF-8">
+<title>Colour Focus - Perception Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="styles/explosion.css">
+
+<style>
+:root {
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --text-main: #111827;
+  --text-soft: #4b5563;
+  --bg: #ffffff;
+  --box-bg: #f9fafb;
+  --border: #e5e7eb;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+body.dark {
+  --accent: #60a5fa;
+  --accent-soft: #1e3a8a;
+  --text-main: #f3f4f6;
+  --text-soft: #cbd5e1;
+  --bg: #0f172a;
+  --box-bg: #1e293b;
+  --border: #334155;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: system-ui, sans-serif;
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  padding: 20px 20px 100px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: background 0.3s, border 0.3s;
+}
+
+header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+  position: relative;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+#theme-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+  gap: 8px;
+}
+
+.box {
+  background: var(--box-bg);
+  padding: 10px;
+  border-radius: 12px;
+  width: 50%;
+  text-align: center;
+  border: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+.box-label {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+
+#timer-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+#score-value,
+#best-score-value,
+#best-level-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.mid-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mid-box {
+  flex: 1;
+  background: var(--box-bg);
+  border-radius: 10px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
+}
+
+#accuracy,
+#level-label {
+  color: var(--text-soft);
+}
+
+#lives {
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+#level-label {
+  font-size: 14px;
+  margin: 6px 0 4px;
+  min-height: 20px;
+}
+
+.game-flash {
+  min-height: 28px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 180ms ease-out, transform 180ms ease-out;
+  pointer-events: none;
+}
+
+.game-flash.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.combo-display {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 6px 14px;
+  background: rgba(17, 24, 39, 0.72);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+  z-index: 999;
+}
+
+.grid {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 14px;
+}
+
+.tile {
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  box-sizing: border-box;
+  transition: transform 120ms ease-out, filter 120ms ease-out;
+}
+
+.tile:active {
+  transform: scale(0.98);
+}
+
+.tile.wrong-answer-feedback {
+  filter: brightness(1.22) saturate(1.2);
+}
+
+.tile.correct-glimpse {
+  outline: 2px solid #22c55e;
+  outline-offset: 1px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.primary {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.ghost {
+  background: var(--box-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.mode-row {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: min(420px, calc(100vw - 24px));
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  z-index: 70;
+  padding: 10px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.mode-row button {
+  width: 100%;
+  padding: 10px 0;
+}
+
+.mode-row button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+#pause-overlay,
+#results-overlay,
+#leaderboard-overlay,
+#name-overlay,
+#profile-overlay,
+#achievements-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.12);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.overlay-card {
+  background: var(--box-bg);
+  border-radius: 16px;
+  padding: 18px 16px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.overlay-card h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.overlay-card p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.overlay-card button {
+  margin-top: 10px;
+}
+
+#results-overlay .overlay-card.relaxed {
+  max-width: 300px;
+  padding: 18px 14px;
+}
+
+#results-overlay .overlay-card.relaxed p {
+  font-size: 14px;
+}
+
+.rank-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.rank-bronze { background: #d97757; color: #111827; }
+.rank-silver { background: #e5e7eb; color: #111827; }
+.rank-gold { background: #facc15; color: #111827; }
+.rank-diamond { background: #bfdbfe; color: #1e3a8a; }
+.rank-master { background: #c4b5fd; color: #4c1d95; }
+
+.lb-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.lb-tab {
+  padding: 8px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--box-bg);
+  color: var(--text-main);
+}
+
+.lb-tab.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.lb-panel {
+  display: none;
+}
+
+.lb-panel.active {
+  display: block;
+}
+
+.lb-meta {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.lb-runs,
+.lb-global-list {
+  margin-top: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  text-align: left;
+  font-size: 12px;
+}
+
+.lb-run-row {
+  margin: 6px 0;
+}
+
+.lb-run-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  gap: 4px;
+}
+
+.lb-run-label span {
+  white-space: nowrap;
+}
+
+.lb-run-label span:last-child {
+  margin-left: auto;
+}
+
+.lb-bar-outer {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.lb-bar-inner {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.name-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text-main);
+}
+
+.profile-list,
+.ach-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--box-bg);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.profile-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.ach-list {
+  max-height: 260px;
+  overflow-y: auto;
+  text-align: left;
+  font-size: 13px;
+}
+
+.medal-card {
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #111827;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+}
+
+.medal-gold { background: #facc15; }
+.medal-silver { background: #e5e7eb; }
+.medal-bronze { background: #d97757; }
+
+.medal-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.medal-date {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.mode-badge {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 14px 14px 108px;
+  }
+
+  .app {
+    padding: 14px;
+  }
+
+  .controls button {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .mode-row {
+    width: calc(100vw - 18px);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lb-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <h1>Colour Focus</h1>
+    <div class="subtitle">Tap the lighter square as quickly and accurately as you can.</div>
+    <button id="theme-toggle">🌙</button>
+  </header>
+
+  <div class="top-row">
+    <div class="box">
+      <div class="box-label" id="best-score-label">Best Score</div>
+      <div id="best-score-value">0</div>
+    </div>
+    <div class="box">
+      <div class="box-label" id="best-level-label">Best Level</div>
+      <div id="best-level-value">1</div>
+    </div>
+  </div>
+
+  <div class="top-row">
+    <div class="box">
+      <div class="box-label">Time</div>
+      <div id="timer-value">01:00</div>
+    </div>
+    <div class="box">
+      <div class="box-label">Score</div>
+      <div id="score-value">0</div>
+    </div>
+  </div>
+
+  <div class="mid-row">
+    <div class="mid-box">
+      <div class="box-label">Accuracy</div>
+      <div id="accuracy">0% (0 / 0)</div>
+    </div>
+    <div class="mid-box">
+      <div class="box-label">Lives</div>
+      <div id="lives">❤️❤️❤️</div>
+    </div>
+  </div>
+
+  <div id="level-label">Level 1</div>
+  <div id="game-flash" class="game-flash"></div>
+  <div id="comboDisplay" class="combo-display">Combo x1</div>
+  <div id="grid" class="grid"></div>
+
+  <div class="controls">
+    <button id="pause-btn" class="ghost">Pause</button>
+    <button id="restart-btn" class="ghost">Restart</button>
+    <button id="start-btn" class="primary">Play</button>
+    <button id="leaderboard-btn" class="ghost">Leaderboard</button>
+    <button id="achievements-btn" class="ghost">Achievements</button>
+  </div>
+</div>
+
+<div class="mode-row" id="mode-row">
+  <button class="ghost active" data-mode="relaxed">Relaxed</button>
+  <button class="ghost" data-mode="classic">Classic</button>
+  <button class="ghost" data-mode="extreme">Extreme</button>
+  <button class="ghost" data-mode="daily">Daily</button>
+</div>
+
+<div id="pause-overlay">
+  <div class="overlay-card">
+    <h2>Paused</h2>
+    <p>Take a breather. Tap continue when you're ready.</p>
+    <button id="continue-btn" class="primary">Continue</button>
+  </div>
+</div>
+
+<div id="results-overlay">
+  <div class="overlay-card">
+    <h2 id="results-title">Results</h2>
+    <div id="results-mode-badge" class="mode-badge" style="display:none;"></div>
+    <p id="results-score"></p>
+    <p id="results-accuracy"></p>
+    <p id="results-level"></p>
+    <p id="results-best"></p>
+
+    <button id="play-again-btn" class="primary">Play Again</button>
+    <button id="results-leaderboard-btn" class="ghost">Leaderboard</button>
+    <button id="results-achievements-btn" class="ghost">Achievements</button>
+  </div>
+</div>
+
+<div id="leaderboard-overlay">
+  <div class="overlay-card">
+    <h2>Leaderboard</h2>
+
+    <div class="lb-tabs">
+      <button class="lb-tab active" data-lb-tab="classic">Classic</button>
+      <button class="lb-tab" data-lb-tab="extreme">Extreme</button>
+      <button class="lb-tab" data-lb-tab="daily">Daily</button>
+      <button class="lb-tab" data-lb-tab="relaxed">Relaxed</button>
+    </div>
+
+    <div id="lb-panel-classic" class="lb-panel active">
+      <div id="lb-rank-pill-classic" class="rank-pill rank-bronze">BRONZE</div>
+      <p id="lb-summary-classic"></p>
+      <p id="lb-reset-classic"></p>
+      <p id="lb-username-classic"></p>
+      <div class="lb-meta">Top runs in Classic mode:</div>
+      <div id="lb-runs-classic" class="lb-runs"></div>
+    </div>
+
+    <div id="lb-panel-extreme" class="lb-panel">
+      <div id="lb-rank-pill-extreme" class="rank-pill rank-bronze">BRONZE</div>
+      <p id="lb-summary-extreme"></p>
+      <p id="lb-reset-extreme"></p>
+      <p id="lb-username-extreme"></p>
+      <div class="lb-meta">Top runs in Extreme mode:</div>
+      <div id="lb-runs-extreme" class="lb-runs"></div>
+    </div>
+
+    <div id="lb-panel-daily" class="lb-panel">
+      <div id="lb-rank-pill-daily" class="rank-pill rank-bronze">BRONZE</div>
+      <p id="lb-summary-daily"></p>
+      <p id="lb-reset-daily"></p>
+      <p id="lb-username-daily"></p>
+      <div class="lb-meta">Top runs for today:</div>
+      <div id="lb-runs-daily" class="lb-runs"></div>
+    </div>
+
+    <div id="lb-panel-relaxed" class="lb-panel">
+      <div id="lb-rank-pill-relaxed" class="rank-pill rank-bronze">RELAXED</div>
+      <p id="lb-summary-relaxed"></p>
+      <p id="lb-reset-relaxed"></p>
+      <p id="lb-username-relaxed"></p>
+      <div class="lb-meta">Relaxed mode keeps only your personal best.</div>
+      <div id="lb-runs-relaxed" class="lb-runs"></div>
+    </div>
+
+    <button id="lb-name-btn" class="ghost">Change name</button>
+    <button id="lb-profile-btn" class="ghost">Switch profile</button>
+    <button id="lb-close-btn" class="primary">Close</button>
+  </div>
+</div>
+
+<div id="name-overlay">
+  <div class="overlay-card">
+    <h2>Set Your Name</h2>
+    <p>Choose the name that appears on your leaderboard.</p>
+    <input id="name-input" class="name-input" maxlength="20">
+    <button id="name-save-btn" class="primary">Save</button>
+  </div>
+</div>
+
+<div id="profile-overlay">
+  <div class="overlay-card">
+    <h2>Select Profile</h2>
+    <p>You can have up to 3 profiles on this device.</p>
+    <div id="profile-list" class="profile-list"></div>
+    <button id="add-profile-btn" class="ghost">Add profile</button>
+    <button id="profile-close-btn" class="primary">Close</button>
+  </div>
+</div>
+
+<div id="achievements-overlay">
+  <div class="overlay-card">
+    <h2>Achievements</h2>
+    <p>Your permanent achievements on this device.</p>
+    <div id="ach-list" class="ach-list"></div>
+    <button id="ach-close-btn" class="primary">Close</button>
+  </div>
+</div>
+
+<script src="scripts/explosion-and-feedback.js"></script>
+
+<script>
+(() => {
+  const STORAGE_KEYS = {
+    theme: "colourFocusTheme",
+    profiles: "colourFocusProfiles",
+    leaderboards: "colourFocusLeaderboards",
+    dailyHues: "colourFocusDailyHues"
+  };
+
+  const MODE_CONFIG = {
+    relaxed: {
+      label: "Relaxed",
+      timerSeconds: 120,
+      lives: Infinity,
+      endless: true,
+      showBestLevel: true,
+      rank: null,
+      scoreMultiplier: 1,
+      oddDeltaBoost: 0.95
+    },
+    classic: {
+      label: "Classic",
+      timerSeconds: 60,
+      lives: 3,
+      endless: true,
+      showBestLevel: true,
+      rank: "classic",
+      scoreMultiplier: 1,
+      oddDeltaBoost: 1
+    },
+    extreme: {
+      label: "Extreme",
+      timerSeconds: 30,
+      lives: 1,
+      endless: true,
+      showBestLevel: true,
+      rank: "extreme",
+      scoreMultiplier: 1.12,
+      oddDeltaBoost: 0.84
+    },
+    daily: {
+      label: "Daily",
+      timerSeconds: 60,
+      lives: 3,
+      endless: true,
+      showBestLevel: true,
+      rank: "classic",
+      scoreMultiplier: 1,
+      oddDeltaBoost: 1
+    }
+  };
+
+  const baseAccent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2563eb";
+  const baseAccentSoft = getComputedStyle(document.documentElement).getPropertyValue("--accent-soft").trim() || "#dbeafe";
+
+  const els = {
+    body: document.body,
+    themeToggle: document.getElementById("theme-toggle"),
+    grid: document.getElementById("grid"),
+    timerValue: document.getElementById("timer-value"),
+    scoreValue: document.getElementById("score-value"),
+    bestScoreValue: document.getElementById("best-score-value"),
+    bestLevelValue: document.getElementById("best-level-value"),
+    bestScoreLabel: document.getElementById("best-score-label"),
+    bestLevelLabel: document.getElementById("best-level-label"),
+    levelLabel: document.getElementById("level-label"),
+    accuracy: document.getElementById("accuracy"),
+    lives: document.getElementById("lives"),
+    flash: document.getElementById("game-flash"),
+    combo: document.getElementById("comboDisplay"),
+
+    pauseOverlay: document.getElementById("pause-overlay"),
+    resultsOverlay: document.getElementById("results-overlay"),
+    leaderboardOverlay: document.getElementById("leaderboard-overlay"),
+    nameOverlay: document.getElementById("name-overlay"),
+    profileOverlay: document.getElementById("profile-overlay"),
+    achievementsOverlay: document.getElementById("achievements-overlay"),
+
+    pauseBtn: document.getElementById("pause-btn"),
+    continueBtn: document.getElementById("continue-btn"),
+    startBtn: document.getElementById("start-btn"),
+    restartBtn: document.getElementById("restart-btn"),
+    playAgainBtn: document.getElementById("play-again-btn"),
+    leaderboardBtn: document.getElementById("leaderboard-btn"),
+    achievementsBtn: document.getElementById("achievements-btn"),
+    resultsLeaderboardBtn: document.getElementById("results-leaderboard-btn"),
+    resultsAchievementsBtn: document.getElementById("results-achievements-btn"),
+    lbCloseBtn: document.getElementById("lb-close-btn"),
+    lbNameBtn: document.getElementById("lb-name-btn"),
+    lbProfileBtn: document.getElementById("lb-profile-btn"),
+
+    resultsTitle: document.getElementById("results-title"),
+    resultsModeBadge: document.getElementById("results-mode-badge"),
+    resultsScore: document.getElementById("results-score"),
+    resultsAccuracy: document.getElementById("results-accuracy"),
+    resultsLevel: document.getElementById("results-level"),
+    resultsBest: document.getElementById("results-best"),
+
+    nameInput: document.getElementById("name-input"),
+    nameSaveBtn: document.getElementById("name-save-btn"),
+
+    profileList: document.getElementById("profile-list"),
+    addProfileBtn: document.getElementById("add-profile-btn"),
+    profileCloseBtn: document.getElementById("profile-close-btn"),
+
+    achList: document.getElementById("ach-list"),
+    achCloseBtn: document.getElementById("ach-close-btn"),
+
+    modeRow: document.getElementById("mode-row"),
+    leaderboardTabs: Array.from(document.querySelectorAll(".lb-tab")),
+    leaderboardPanels: {
+      classic: document.getElementById("lb-panel-classic"),
+      extreme: document.getElementById("lb-panel-extreme"),
+      daily: document.getElementById("lb-panel-daily"),
+      relaxed: document.getElementById("lb-panel-relaxed")
+    },
+    leaderboardSummary: {
+      classic: document.getElementById("lb-summary-classic"),
+      extreme: document.getElementById("lb-summary-extreme"),
+      daily: document.getElementById("lb-summary-daily"),
+      relaxed: document.getElementById("lb-summary-relaxed")
+    },
+    leaderboardRank: {
+      classic: document.getElementById("lb-rank-pill-classic"),
+      extreme: document.getElementById("lb-rank-pill-extreme"),
+      daily: document.getElementById("lb-rank-pill-daily"),
+      relaxed: document.getElementById("lb-rank-pill-relaxed")
+    },
+    leaderboardReset: {
+      classic: document.getElementById("lb-reset-classic"),
+      extreme: document.getElementById("lb-reset-extreme"),
+      daily: document.getElementById("lb-reset-daily"),
+      relaxed: document.getElementById("lb-reset-relaxed")
+    },
+    leaderboardUsername: {
+      classic: document.getElementById("lb-username-classic"),
+      extreme: document.getElementById("lb-username-extreme"),
+      daily: document.getElementById("lb-username-daily"),
+      relaxed: document.getElementById("lb-username-relaxed")
+    },
+    leaderboardRuns: {
+      classic: document.getElementById("lb-runs-classic"),
+      extreme: document.getElementById("lb-runs-extreme"),
+      daily: document.getElementById("lb-runs-daily"),
+      relaxed: document.getElementById("lb-runs-relaxed")
+    }
+  };
+
+  const state = {
+    mode: "relaxed",
+    running: false,
+    paused: false,
+    feedbackLock: false,
+    level: 1,
+    score: 0,
+    correct: 0,
+    wrong: 0,
+    lives: Infinity,
+    remaining: 120,
+    timer: null,
+    oddIndex: -1,
+    currentCombo: 0,
+    maxCombo: 0,
+    lastClickTime: null,
+    currentProfileId: null,
+    profiles: null,
+    boards: null,
+    dailyDateKey: getLocalDateKey(),
+    dailyHue: 210,
+    currentPuzzleHue: 210,
+    currentPuzzleSeed: 0
+  };
+
+  function getLocalDateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return h >>> 0;
+  }
+
+  function safeParse(raw, fallback) {
+    try {
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function saveJSON(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function createDefaultStats() {
+    return {
+      classic: { bestScore: 0, bestLevel: 1 },
+      extreme: { bestScore: 0, bestLevel: 1 },
+      daily: { dateKey: getLocalDateKey(), bestScore: 0, bestLevel: 1 },
+      relaxed: { bestScore: 0, bestLevel: 1 }
+    };
+  }
+
+  function createProfile() {
+    return {
+      id: `p_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      username: `CF-${Math.floor(1000 + Math.random() * 9000)}`,
+      stats: createDefaultStats(),
+      achievements: []
+    };
+  }
+
+  function normalizeProfile(profile) {
+    if (!profile || typeof profile !== "object") return createProfile();
+    if (!profile.id) profile.id = `p_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    if (!profile.username) profile.username = `CF-${Math.floor(1000 + Math.random() * 9000)}`;
+    if (!profile.stats) profile.stats = createDefaultStats();
+
+    const defaults = createDefaultStats();
+    for (const mode of Object.keys(defaults)) {
+      profile.stats[mode] = { ...defaults[mode], ...(profile.stats[mode] || {}) };
+    }
+
+    if (!Array.isArray(profile.achievements)) profile.achievements = [];
+    return profile;
+  }
+
+  function loadProfiles() {
+    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.profiles), null);
+
+    if (!raw || !raw.profiles || Object.keys(raw.profiles).length === 0) {
+      const p = createProfile();
+      state.profiles = { activeId: p.id, profiles: { [p.id]: p } };
+      state.currentProfileId = p.id;
+      saveProfiles();
+      return;
+    }
+
+    const normalized = {
+      activeId: raw.activeId,
+      profiles: {}
+    };
+
+    for (const [id, profile] of Object.entries(raw.profiles)) {
+      normalized.profiles[id] = normalizeProfile(profile);
+    }
+
+    if (!normalized.activeId || !normalized.profiles[normalized.activeId]) {
+      normalized.activeId = Object.keys(normalized.profiles)[0];
+    }
+
+    state.profiles = normalized;
+    state.currentProfileId = normalized.activeId;
+    saveProfiles();
+  }
+
+  function saveProfiles() {
+    saveJSON(STORAGE_KEYS.profiles, state.profiles);
+  }
+
+  function getCurrentProfile() {
+    return state.profiles.profiles[state.currentProfileId];
+  }
+
+  function setActiveProfile(id) {
+    if (!state.profiles.profiles[id]) return;
+    state.profiles.activeId = id;
+    state.currentProfileId = id;
+    saveProfiles();
+    syncPersonalBestsToUI();
+    renderProfileList();
+  }
+
+  function loadBoards() {
+    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.leaderboards), null);
+    state.boards = raw && typeof raw === "object" ? raw : { classic: { runs: [] }, extreme: { runs: [] }, daily: { days: {} } };
+
+    if (!state.boards.classic) state.boards.classic = { runs: [] };
+    if (!state.boards.extreme) state.boards.extreme = { runs: [] };
+    if (!state.boards.daily) state.boards.daily = { days: {} };
+    if (!state.boards.daily.days) state.boards.daily.days = {};
+  }
+
+  function saveBoards() {
+    saveJSON(STORAGE_KEYS.leaderboards, state.boards);
+  }
+
+  function getDailyHue(dateKey) {
+    const raw = safeParse(localStorage.getItem(STORAGE_KEYS.dailyHues), {});
+    if (typeof raw[dateKey] !== "number") {
+      const seed = hashString(dateKey);
+      raw[dateKey] = seed % 360;
+      saveJSON(STORAGE_KEYS.dailyHues, raw);
+    }
+    return raw[dateKey];
+  }
+
+  function getCurrentStats(mode) {
+    return getCurrentProfile().stats[mode];
+  }
+
+  function syncPersonalBestsToUI() {
+    const stats = getCurrentStats(state.mode);
+    els.bestScoreValue.textContent = stats.bestScore ?? 0;
+    els.bestLevelValue.textContent = stats.bestLevel ?? 1;
+
+    if (state.mode === "relaxed") {
+      els.bestScoreLabel.textContent = "Best Score";
+      els.bestLevelLabel.textContent = "Best Level";
+    } else if (state.mode === "extreme") {
+      els.bestScoreLabel.textContent = "Best Score";
+      els.bestLevelLabel.textContent = "Best Level";
+    } else if (state.mode === "daily") {
+      els.bestScoreLabel.textContent = "Best Score";
+      els.bestLevelLabel.textContent = "Best Level";
+    } else {
+      els.bestScoreLabel.textContent = "Best Score";
+      els.bestLevelLabel.textContent = "Best Level";
+    }
+  }
+
+  function setThemeFromStorage() {
+    const theme = localStorage.getItem(STORAGE_KEYS.theme);
+    if (theme === "dark") {
+      document.body.classList.add("dark");
+      els.themeToggle.textContent = "☀️";
+    } else {
+      els.themeToggle.textContent = "🌙";
+    }
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+    els.themeToggle.textContent = isDark ? "☀️" : "🌙";
+    localStorage.setItem(STORAGE_KEYS.theme, isDark ? "dark" : "light");
+  }
+
+  function showFlash(text, duration = 700) {
+    els.flash.textContent = text;
+    els.flash.classList.add("show");
+    clearTimeout(showFlash._t);
+    showFlash._t = setTimeout(() => {
+      els.flash.classList.remove("show");
+    }, duration);
+  }
+
+  function showCombo(text, duration = 1200) {
+    els.combo.textContent = text;
+    els.combo.style.opacity = 1;
+    clearTimeout(showCombo._t);
+    showCombo._t = setTimeout(() => {
+      if (state.currentCombo > 1) {
+        els.combo.textContent = `Combo x${state.currentCombo}`;
+        els.combo.style.opacity = 1;
+      } else {
+        els.combo.style.opacity = 0;
+      }
+    }, duration);
+  }
+
+  function updateComboDisplay() {
+    if (state.currentCombo <= 1) {
+      els.combo.style.opacity = 0;
+      return;
+    }
+    els.combo.textContent = `Combo x${state.currentCombo}`;
+    els.combo.style.opacity = 1;
+  }
+
+  function vibrate(ms) {
+    if (navigator.vibrate) navigator.vibrate(ms);
+  }
+
+  function updateTimerUI() {
+    const minutes = Math.floor(state.remaining / 60);
+    const seconds = state.remaining % 60;
+    els.timerValue.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  function updateAccuracyUI() {
+    const total = state.correct + state.wrong;
+    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
+    els.accuracy.textContent = `${pct}% (${state.correct} / ${total})`;
+  }
+
+  function updateLivesUI() {
+    if (state.lives === Infinity) {
+      els.lives.textContent = "∞";
+      return;
+    }
+    const hearts = "❤️".repeat(Math.max(0, state.lives));
+    const empty = "🤍".repeat(Math.max(0, 3 - state.lives));
+    els.lives.textContent = hearts + empty;
+  }
+
+  function updateModeButtons() {
+    Array.from(els.modeRow.querySelectorAll("button")).forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.mode === state.mode);
+    });
+  }
+
+  function applyDailyAccent() {
+    if (state.mode === "daily") {
+      const hue = state.dailyHue;
+      document.documentElement.style.setProperty("--accent", `hsl(${hue}, 88%, 54%)`);
+      document.documentElement.style.setProperty("--accent-soft", `hsl(${hue}, 92%, 92%)`);
+    } else {
+      document.documentElement.style.setProperty("--accent", baseAccent);
+      document.documentElement.style.setProperty("--accent-soft", baseAccentSoft);
+    }
+  }
+
+  function setMode(mode, restart = true) {
+    if (!MODE_CONFIG[mode]) return;
+    state.mode = mode;
+    state.dailyDateKey = getLocalDateKey();
+    state.dailyHue = getDailyHue(state.dailyDateKey);
+    applyDailyAccent();
+    updateModeButtons();
+    syncPersonalBestsToUI();
+    showFlash(`${MODE_CONFIG[mode].label} mode`, 750);
+    if (restart) startSession(mode);
+  }
+
+  function getClassicRank(score) {
+    if (score >= 10000) return "MASTER";
+    if (score >= 7000) return "DIAMOND";
+    if (score >= 5000) return "GOLD";
+    if (score >= 3000) return "SILVER";
+    return "BRONZE";
+  }
+
+  function getExtremeRank(level) {
+    if (level >= 40) return "MASTER";
+    if (level >= 35) return "DIAMOND";
+    if (level >= 30) return "GOLD";
+    if (level >= 25) return "SILVER";
+    return "BRONZE";
+  }
+
+  function setRankPill(el, rank) {
+    el.className = "rank-pill";
+    if (rank === "MASTER") el.classList.add("rank-master");
+    else if (rank === "DIAMOND") el.classList.add("rank-diamond");
+    else if (rank === "GOLD") el.classList.add("rank-gold");
+    else if (rank === "SILVER") el.classList.add("rank-silver");
+    else el.classList.add("rank-bronze");
+    el.textContent = rank;
+  }
+
+  function getModeLeaderboardData(mode) {
+    if (mode === "daily") {
+      const dateKey = getLocalDateKey();
+      if (!state.boards.daily.days[dateKey]) {
+        state.boards.daily.days[dateKey] = { runs: [] };
+      }
+      return state.boards.daily.days[dateKey];
+    }
+    if (!state.boards[mode]) state.boards[mode] = { runs: [] };
+    return state.boards[mode];
+  }
+
+  function resetDailyStoreIfNeeded() {
+    const dateKey = getLocalDateKey();
+    if (dateKey !== state.dailyDateKey) {
+      state.dailyDateKey = dateKey;
+      state.dailyHue = getDailyHue(dateKey);
+      applyDailyAccent();
+      const current = getCurrentProfile().stats.daily;
+      current.dateKey = dateKey;
+      current.bestScore = 0;
+      current.bestLevel = 1;
+      saveProfiles();
+    }
+  }
+
+  function updatePersonalBest(mode) {
+    const profile = getCurrentProfile();
+    const stats = profile.stats[mode] || (profile.stats[mode] = {});
+    if (mode === "daily") {
+      const dateKey = getLocalDateKey();
+      if (stats.dateKey !== dateKey) {
+        stats.dateKey = dateKey;
+        stats.bestScore = 0;
+        stats.bestLevel = 1;
+      }
+    }
+
+    if (state.score > (stats.bestScore || 0)) {
+      stats.bestScore = state.score;
+    }
+    if (state.level > (stats.bestLevel || 1)) {
+      stats.bestLevel = state.level;
+    }
+
+    saveProfiles();
+    syncPersonalBestsToUI();
+  }
+
+  function recordRun(mode, accuracyPct) {
+    const profile = getCurrentProfile();
+    const name = profile.username || "Player";
+    const run = {
+      name,
+      score: state.score,
+      level: state.level,
+      accuracy: accuracyPct,
+      date: new Date().toISOString(),
+      mode
+    };
+
+    if (mode === "relaxed") {
+      updatePersonalBest("relaxed");
+      return;
+    }
+
+    const bucket = getModeLeaderboardData(mode);
+    bucket.runs.push(run);
+    bucket.runs.sort((a, b) => b.score - a.score || b.level - a.level || b.accuracy - a.accuracy);
+    bucket.runs = bucket.runs.slice(0, 10);
+
+    saveBoards();
+    updatePersonalBest(mode);
+  }
+
+  function formatResetText(mode) {
+    if (mode === "daily") {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      const diff = Math.max(0, tomorrow.getTime() - Date.now());
+      const mins = Math.floor(diff / 60000);
+      const hrs = Math.floor(mins / 60);
+      const remMins = mins % 60;
+      return `Resets at midnight local time • ${hrs}h ${remMins}m left`;
+    }
+    if (mode === "relaxed") {
+      return "No leaderboard here — your personal best is saved locally.";
+    }
+    const label = mode === "classic" ? "Classic" : "Extreme";
+    return `${label} leaderboard is local to this device`;
+  }
+
+  function getCurrentRankForMode(mode) {
+    if (mode === "extreme") return getExtremeRank(state.level);
+    if (mode === "relaxed") return "RELAXED";
+    return getClassicRank(state.score);
+  }
+
+  function getGridSize(level) {
+    if (level <= 2) return 2;
+    if (level <= 4) return 3;
+    if (level <= 7) return 4;
+    if (level <= 11) return 5;
+    return 6;
+  }
+
+  function getDelta(level, mode) {
+    const start = mode === "relaxed" ? 15 : mode === "extreme" ? 12 : 14;
+    const end = mode === "relaxed" ? 2 : mode === "extreme" ? 2.5 : 3;
+    const t = Math.min(level - 1, 24) / 24;
+    return start - t * (start - end);
+  }
+
+  function hsl(h, s, l) {
+    return `hsl(${h}, ${s}%, ${l}%)`;
+  }
+
+  function seededRandom(seed) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function createPuzzle() {
+    const size = getGridSize(state.level);
+    const total = size * size;
+    els.grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    els.grid.innerHTML = "";
+
+    const dayHue = state.mode === "daily" ? state.dailyHue : Math.floor(Math.random() * 360);
+    const baseSeed = Date.now() + state.level * 997 + Math.floor(Math.random() * 1000);
+
+    let baseH = dayHue;
+    let baseS = state.mode === "daily" ? 70 : 42 + Math.random() * 28;
+    let baseL = state.mode === "daily" ? 42 + Math.random() * 8 : 30 + Math.random() * 25;
+    let oddH = baseH;
+    let oddS = baseS;
+
+    const delta = getDelta(state.level, state.mode) * (MODE_CONFIG[state.mode].oddDeltaBoost || 1);
+    let oddL = Math.min(baseL + delta, 95);
+
+    if (state.mode !== "daily") {
+      oddH = (baseH + (Math.random() - 0.5) * (state.mode === "extreme" ? 4 : 6) + 360) % 360;
+    }
+
+    const baseColor = hsl(baseH, baseS, baseL);
+    const oddColor = hsl(oddH, oddS, oddL);
+
+    state.oddIndex = Math.floor(Math.random() * total);
+    state.currentPuzzleHue = baseH;
+    state.currentPuzzleSeed = baseSeed;
+
+    for (let i = 0; i < total; i++) {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.style.background = i === state.oddIndex ? oddColor : baseColor;
+      tile.dataset.index = String(i);
+      tile.addEventListener("click", onTileClick);
+      els.grid.appendChild(tile);
+    }
+
+    els.levelLabel.textContent = `Level ${state.level}`;
+  }
+
+  function updateProgressAfterCorrect() {
+    state.level += 1;
+    updateBestLevelDisplay();
+    if (state.level % 10 === 0) {
+      showFlash(`Level ${state.level}!`, 900);
+    }
+    createPuzzle();
+  }
+
+  function updateBestLevelDisplay() {
+    const currentStats = getCurrentStats(state.mode);
+    if (state.level > (currentStats.bestLevel || 1)) {
+      currentStats.bestLevel = state.level;
+      saveProfiles();
+    }
+    syncPersonalBestsToUI();
+  }
+
+  function gainScore() {
+    const now = performance.now();
+    const rtMs = state.lastClickTime === null ? 500 : now - state.lastClickTime;
+    state.lastClickTime = now;
+
+    const base = state.level * 5 * (MODE_CONFIG[state.mode].scoreMultiplier || 1);
+    const speedBonus = Math.max(0, 50 - rtMs / 20);
+    const gained = Math.max(1, Math.round(base + speedBonus));
+
+    state.score += gained;
+    els.scoreValue.textContent = state.score;
+    showFlash(`+${gained} pts`, 500);
+
+    const currentStats = getCurrentStats(state.mode);
+    if (state.score > (currentStats.bestScore || 0)) {
+      currentStats.bestScore = state.score;
+      saveProfiles();
+      syncPersonalBestsToUI();
+    }
+  }
+
+  function finishWrongAnswerTurn() {
+    state.feedbackLock = false;
+
+    if (state.mode !== "relaxed" && state.lives <= 0) {
+      endSession("lives");
+      return;
+    }
+
+    updateProgressAfterCorrect();
+  }
+
+  function onTileClick(event) {
+    if (!state.running || state.paused || state.feedbackLock) return;
+
+    const tile = event.currentTarget;
+    const index = parseInt(tile.dataset.index, 10);
+
+    if (index === state.oddIndex) {
+      state.correct += 1;
+      state.currentCombo += 1;
+      state.maxCombo = Math.max(state.maxCombo, state.currentCombo);
+      updateComboDisplay();
+      updateAccuracyUI();
+      vibrate(20);
+      gainScore();
+      updateProgressAfterCorrect();
+      unlockComboAchievements();
+      return;
+    }
+
+    state.wrong += 1;
+    state.currentCombo = 0;
+    updateComboDisplay();
+
+    if (state.lives !== Infinity) {
+      state.lives = Math.max(0, state.lives - 1);
+      updateLivesUI();
+    }
+
+    updateAccuracyUI();
+    state.feedbackLock = true;
+
+    const correctTile = els.grid.children[state.oddIndex];
+    tile.classList.add("wrong-answer-feedback");
+
+    setTimeout(() => {
+      tile.classList.remove("wrong-answer-feedback");
+
+      if (window.glimpseCorrectThenContinue) {
+        window.glimpseCorrectThenContinue(correctTile, finishWrongAnswerTurn, {
+          glimpseMs: 500,
+          delayBefore: 80
+        });
+      } else {
+        if (correctTile) correctTile.classList.add("correct-glimpse");
+        setTimeout(() => {
+          if (correctTile) correctTile.classList.remove("correct-glimpse");
+          finishWrongAnswerTurn();
+        }, 500);
+      }
+    }, 220);
+  }
+
+  function unlockComboAchievements() {
+    if (state.currentCombo >= 5) unlockAchievement("combo_5", "5 Combo", "✨", { combo: 5 });
+    if (state.currentCombo >= 10) unlockAchievement("combo_10", "10 Combo", "🔥", { combo: 10 });
+    if (state.currentCombo >= 20) unlockAchievement("combo_20", "20 Combo", "⚡", { combo: 20 });
+    if (state.currentCombo >= 30) unlockAchievement("perfect_run_30", "Perfect Run", "🏆", { combo: 30 });
+    if (state.currentCombo >= 50) unlockAchievement("combo_50", "50 Combo", "🚀", { combo: 50 });
+    if (state.currentCombo >= 75) unlockAchievement("combo_75", "75 Combo", "💎", { combo: 75 });
+    if (state.currentCombo >= 100) unlockAchievement("combo_100", "100 Combo", "👑", { combo: 100 });
+  }
+
+  function unlockAchievement(id, title, emoji, extra = {}) {
+    const profile = getCurrentProfile();
+    if (!profile.achievements) profile.achievements = [];
+
+    const existing = profile.achievements.find(entry => entry.id === id);
+    if (existing) {
+      if (extra.incrementCount) {
+        existing.count = (existing.count || 1) + 1;
+        existing.lastAchieved = new Date().toISOString();
+        saveProfiles();
+        showCombo(`${emoji} ${title} x${existing.count}`, 1200);
+      }
+      return;
+    }
+
+    profile.achievements.push({
+      id,
+      title,
+      emoji,
+      combo: extra.combo || null,
+      count: extra.count || 1,
+      date: new Date().toISOString(),
+      lastAchieved: new Date().toISOString()
+    });
+
+    saveProfiles();
+    showCombo(`${emoji} Achievement!`, 1000);
+  }
+
+  function updateModeBadge() {
+    if (state.mode === "relaxed") {
+      els.resultsModeBadge.style.display = "inline-block";
+      els.resultsModeBadge.textContent = "Relaxed";
+    } else {
+      els.resultsModeBadge.style.display = "none";
+      els.resultsModeBadge.textContent = "";
+    }
+  }
+
+  function showResultsOverlay(messageOnly = false) {
+    const profile = getCurrentProfile();
+    const stats = profile.stats[state.mode] || createDefaultStats()[state.mode];
+    const rank = getCurrentRankForMode(state.mode);
+    setRankPill(els.leaderboardRank[state.mode], rank);
+
+    els.resultsOverlay.querySelector(".overlay-card").classList.toggle("relaxed", state.mode === "relaxed");
+    els.resultsTitle.textContent = state.mode === "relaxed" ? "Time's up!" : "Results";
+    updateModeBadge();
+
+    const total = state.correct + state.wrong;
+    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
+
+    if (state.mode === "relaxed") {
+      els.resultsScore.textContent = `Score: ${state.score} — Best: ${stats.bestScore || 0}`;
+      els.resultsAccuracy.textContent = "";
+      els.resultsLevel.textContent = `Level Reached: ${state.level}`;
+      els.resultsBest.textContent = `Mistakes do not end relaxed runs.`;
+    } else {
+      els.resultsScore.textContent = `Score: ${state.score}`;
+      els.resultsAccuracy.textContent = `Accuracy: ${pct}% (${state.correct}/${total})`;
+      els.resultsLevel.textContent = `Level Reached: ${state.level}`;
+      els.resultsBest.textContent = `Best Score: ${stats.bestScore || 0} • Best Level: ${stats.bestLevel || 1}`;
+    }
+
+    els.resultsOverlay.style.display = "flex";
+    els.startBtn.style.display = "inline-block";
+    state.running = false;
+    state.paused = false;
+    clearInterval(state.timer);
+    updateButtons();
+    if (!messageOnly) {
+      // keep legacy behaviour hooks available
+    }
+  }
+
+  function endSession(reason) {
+    if (!state.running) return;
+    clearInterval(state.timer);
+    state.running = false;
+    state.paused = false;
+    state.feedbackLock = false;
+
+    const total = state.correct + state.wrong;
+    const pct = total === 0 ? 0 : Math.round((state.correct / total) * 100);
+
+    if (pct === 100 && total > 0) {
+      unlockAchievement("accuracy_100", "100% Accuracy", "🎯", { incrementCount: true });
+    }
+
+    recordRun(state.mode, pct);
+
+    if (state.mode === "relaxed") {
+      showResultsOverlay(true);
+    } else if (window.explodeAllThenShowStats) {
+      window.explodeAllThenShowStats(() => {
+        showResultsOverlay(false);
+      }, {
+        selector: ".tile",
+        duration: 600,
+        distance: 300,
+        popBefore: true
+      });
+    } else {
+      showResultsOverlay(false);
+    }
+  }
+
+  function tickTimer() {
+    if (!state.running || state.paused) return;
+
+    if (state.mode === "daily") {
+      const today = getLocalDateKey();
+      if (today !== state.dailyDateKey) {
+        state.dailyDateKey = today;
+        state.dailyHue = getDailyHue(today);
+        applyDailyAccent();
+      }
+    }
+
+    state.remaining -= 1;
+    updateTimerUI();
+
+    if (state.remaining <= 0) {
+      endSession("time");
+    }
+  }
+
+  function startSession(nextMode = state.mode) {
+    if (!MODE_CONFIG[nextMode]) nextMode = "classic";
+
+    clearInterval(state.timer);
+    hideAllOverlays();
+
+    if (nextMode === "daily") {
+      state.dailyDateKey = getLocalDateKey();
+      state.dailyHue = getDailyHue(state.dailyDateKey);
+    }
+
+    state.mode = nextMode;
+    applyDailyAccent();
+    updateModeButtons();
+
+    const config = MODE_CONFIG[state.mode];
+    state.running = true;
+    state.paused = false;
+    state.feedbackLock = false;
+
+    state.level = 1;
+    state.score = 0;
+    state.correct = 0;
+    state.wrong = 0;
+    state.lives = config.lives;
+    state.remaining = config.timerSeconds;
+    state.currentCombo = 0;
+    state.maxCombo = 0;
+    state.lastClickTime = null;
+
+    els.scoreValue.textContent = "0";
+    updateAccuracyUI();
+    updateLivesUI();
+    updateTimerUI();
+    updateComboDisplay();
+    syncPersonalBestsToUI();
+
+    els.startBtn.style.display = "none";
+    updateButtons();
+
+    showFlash(`${config.label} mode`, 600);
+    createPuzzle();
+
+    state.timer = setInterval(tickTimer, 1000);
+  }
+
+  function updateButtons() {
+    const showGameButtons = state.running;
+    els.pauseBtn.style.display = showGameButtons ? "inline-block" : "none";
+    els.restartBtn.style.display = showGameButtons ? "inline-block" : "none";
+    els.leaderboardBtn.style.display = "inline-block";
+    els.achievementsBtn.style.display = "inline-block";
+  }
+
+  function pauseGame() {
+    if (!state.running || state.paused) return;
+    state.paused = true;
+    els.pauseOverlay.style.display = "flex";
+  }
+
+  function continueGame() {
+    if (!state.paused) return;
+    state.paused = false;
+    els.pauseOverlay.style.display = "none";
+  }
+
+  function hideAllOverlays() {
+    els.pauseOverlay.style.display = "none";
+    els.resultsOverlay.style.display = "none";
+    els.leaderboardOverlay.style.display = "none";
+    els.nameOverlay.style.display = "none";
+    els.profileOverlay.style.display = "none";
+    els.achievementsOverlay.style.display = "none";
+  }
+
+  function renderLeaderboard(mode = state.mode) {
+    if (!MODE_CONFIG[mode]) mode = "classic";
+
+    Array.from(els.leaderboardTabs).forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lbTab === mode);
+    });
+
+    Object.entries(els.leaderboardPanels).forEach(([m, panel]) => {
+      panel.classList.toggle("active", m === mode);
+    });
+
+    const profile = getCurrentProfile();
+    const stats = profile.stats[mode] || createDefaultStats()[mode];
+    const rank = getCurrentRankForMode(mode);
+
+    setRankPill(els.leaderboardRank[mode], rank);
+    els.leaderboardSummary[mode].textContent =
+      mode === "relaxed"
+        ? `Personal best: ${stats.bestScore || 0} pts • Level ${stats.bestLevel || 1}`
+        : `Best run: ${stats.bestScore || 0} pts • Level ${stats.bestLevel || 1}`;
+
+    els.leaderboardReset[mode].textContent = formatResetText(mode);
+    els.leaderboardUsername[mode].textContent = `Current name: ${profile.username}`;
+
+    const runsEl = els.leaderboardRuns[mode];
+    runsEl.innerHTML = "";
+
+    if (mode === "relaxed") {
+      if ((stats.bestScore || 0) === 0) {
+        runsEl.textContent = "Play a Relaxed run to save your best score here.";
+      } else {
+        const item = document.createElement("div");
+        item.className = "lb-run-row";
+        item.innerHTML = `
+          <div class="lb-run-label">
+            <span>Best</span>
+            <span>${stats.bestScore || 0} pts • L${stats.bestLevel || 1}</span>
+          </div>
+          <div class="lb-bar-outer"><div class="lb-bar-inner" style="width:100%;background:#22c55e"></div></div>
+        `;
+        runsEl.appendChild(item);
+      }
+      return;
+    }
+
+    const board = getModeLeaderboardData(mode);
+    const runs = [...(board.runs || [])].sort((a, b) => b.score - a.score || b.level - a.level || b.accuracy - a.accuracy);
+
+    if (runs.length === 0) {
+      runsEl.textContent = mode === "daily"
+        ? "No runs yet today. Play to create today’s board."
+        : `No ${MODE_CONFIG[mode].label.toLowerCase()} runs yet.`;
+      return;
+    }
+
+    const maxScore = Math.max(...runs.map(r => r.score), 1);
+
+    runs.forEach((run, idx) => {
+      const row = document.createElement("div");
+      row.className = "lb-run-row";
+
+      const label = document.createElement("div");
+      label.className = "lb-run-label";
+      label.innerHTML = `
+        <span>#${idx + 1}</span>
+        <span>${run.name || "Player"} • ${run.score} pts • L${run.level} • ${run.accuracy}%</span>
+      `;
+
+      const barOuter = document.createElement("div");
+      barOuter.className = "lb-bar-outer";
+
+      const barInner = document.createElement("div");
+      barInner.className = "lb-bar-inner";
+
+      const width = Math.max(5, (run.score / maxScore) * 100);
+      barInner.style.width = `${width}%`;
+
+      let color = "#f97373";
+      if (run.accuracy >= 80) color = "#22c55e";
+      else if (run.accuracy >= 60) color = "#eab308";
+
+      barInner.style.background = color;
+      barOuter.appendChild(barInner);
+
+      row.appendChild(label);
+      row.appendChild(barOuter);
+      runsEl.appendChild(row);
+    });
+  }
+
+  function switchLeaderboardTab(mode) {
+    renderLeaderboard(mode);
+  }
+
+  function renderProfileList() {
+    els.profileList.innerHTML = "";
+    const profiles = Object.values(state.profiles.profiles);
+
+    profiles.forEach(profile => {
+      const btn = document.createElement("button");
+      btn.className = "profile-btn" + (profile.id === state.currentProfileId ? " active" : "");
+      btn.textContent = profile.username;
+      btn.addEventListener("click", () => {
+        setActiveProfile(profile.id);
+        renderProfileList();
+      });
+      els.profileList.appendChild(btn);
+    });
+
+    els.addProfileBtn.style.display = profiles.length >= 3 ? "none" : "block";
+  }
+
+  function showProfileOverlay() {
+    renderProfileList();
+    els.profileOverlay.style.display = "flex";
+  }
+
+  function hideProfileOverlay() {
+    els.profileOverlay.style.display = "none";
+  }
+
+  function renderAchievements() {
+    const profile = getCurrentProfile();
+    const ach = profile.achievements || [];
+    els.achList.innerHTML = "";
+
+    if (ach.length === 0) {
+      els.achList.textContent = "No achievements yet. Finish clean runs or build combos to unlock them.";
+      return;
+    }
+
+    ach.slice().reverse().forEach(entry => {
+      const card = document.createElement("div");
+      card.className = entry.medal ? `medal-card medal-${entry.medal}` : "medal-card medal-gold";
+
+      if (entry.medal) {
+        const icon = entry.medal === "gold" ? "🥇" : entry.medal === "silver" ? "🥈" : "🥉";
+        const title = document.createElement("div");
+        title.className = "medal-title";
+        title.textContent = `${icon} ${entry.medal.toUpperCase()} MEDAL`;
+
+        const date = document.createElement("div");
+        date.className = "medal-date";
+        date.textContent = new Date(entry.weekStart || Date.now()).toLocaleDateString();
+
+        card.appendChild(title);
+        card.appendChild(date);
+      } else {
+        const title = document.createElement("div");
+        title.className = "medal-title";
+        title.textContent = `${entry.emoji} ${entry.title}`;
+
+        const details = document.createElement("div");
+        details.className = "medal-date";
+        const firstDate = entry.date ? new Date(entry.date).toLocaleDateString() : "Unknown date";
+        details.textContent = entry.combo ? `Combo required: ${entry.combo} • First achieved: ${firstDate}` : `First achieved: ${firstDate}`;
+
+        card.appendChild(title);
+        card.appendChild(details);
+
+        if (entry.id === "accuracy_100" && entry.count && entry.count > 1) {
+          const countBadge = document.createElement("div");
+          countBadge.textContent = `x${entry.count}`;
+          countBadge.style.position = "absolute";
+          countBadge.style.top = "8px";
+          countBadge.style.right = "10px";
+          countBadge.style.fontWeight = "800";
+          countBadge.style.fontSize = "13px";
+          countBadge.style.background = "rgba(17, 24, 39, 0.18)";
+          countBadge.style.padding = "2px 7px";
+          countBadge.style.borderRadius = "999px";
+          card.style.position = "relative";
+          card.appendChild(countBadge);
+        }
+      }
+
+      els.achList.appendChild(card);
+    });
+  }
+
+  function setUsername(newName) {
+    const trimmed = String(newName || "").trim();
+    if (!trimmed) return;
+    const profile = getCurrentProfile();
+    profile.username = trimmed;
+    saveProfiles();
+  }
+
+  function unlockAchievement(id, title, emoji, extra = {}) {
+    const profile = getCurrentProfile();
+    if (!profile.achievements) profile.achievements = [];
+
+    const existing = profile.achievements.find(entry => entry.id === id);
+    if (existing) {
+      if (extra.incrementCount) {
+        existing.count = (existing.count || 1) + 1;
+        existing.lastAchieved = new Date().toISOString();
+        saveProfiles();
+        showCombo(`${emoji} ${title} x${existing.count}`, 1200);
+      }
+      return;
+    }
+
+    profile.achievements.push({
+      id,
+      title,
+      emoji,
+      combo: extra.combo || null,
+      count: extra.count || 1,
+      date: new Date().toISOString(),
+      lastAchieved: new Date().toISOString()
+    });
+
+    saveProfiles();
+    showCombo(`${emoji} Achievement!`, 1000);
+  }
+
+  function updateCurrentBestViewAfterModeChange() {
+    if (state.mode === "daily") resetDailyStoreIfNeeded();
+    syncPersonalBestsToUI();
+  }
+
+  function attachEvents() {
+    els.themeToggle.addEventListener("click", toggleTheme);
+    els.pauseBtn.addEventListener("click", pauseGame);
+    els.continueBtn.addEventListener("click", continueGame);
+    els.startBtn.addEventListener("click", () => startSession(state.mode));
+    els.restartBtn.addEventListener("click", () => startSession(state.mode));
+    els.playAgainBtn.addEventListener("click", () => startSession(state.mode));
+    els.leaderboardBtn.addEventListener("click", () => {
+      renderLeaderboard(state.mode);
+      els.leaderboardOverlay.style.display = "flex";
+    });
+    els.achievementsBtn.addEventListener("click", () => {
+      renderAchievements();
+      els.achievementsOverlay.style.display = "flex";
+    });
+    els.resultsLeaderboardBtn.addEventListener("click", () => {
+      els.resultsOverlay.style.display = "none";
+      renderLeaderboard(state.mode);
+      els.leaderboardOverlay.style.display = "flex";
+    });
+    els.resultsAchievementsBtn.addEventListener("click", () => {
+      els.resultsOverlay.style.display = "none";
+      renderAchievements();
+      els.achievementsOverlay.style.display = "flex";
+    });
+    els.lbCloseBtn.addEventListener("click", () => els.leaderboardOverlay.style.display = "none");
+    els.lbNameBtn.addEventListener("click", () => {
+      els.nameInput.value = getCurrentProfile().username || "";
+      els.nameOverlay.style.display = "flex";
+    });
+    els.lbProfileBtn.addEventListener("click", showProfileOverlay);
+    els.nameSaveBtn.addEventListener("click", () => {
+      setUsername(els.nameInput.value);
+      els.nameOverlay.style.display = "none";
+      renderProfileList();
+    });
+    els.addProfileBtn.addEventListener("click", () => {
+      const count = Object.keys(state.profiles.profiles).length;
+      if (count >= 3) return;
+      const profile = createProfile();
+      state.profiles.profiles[profile.id] = profile;
+      setActiveProfile(profile.id);
+      renderProfileList();
+    });
+    els.profileCloseBtn.addEventListener("click", hideProfileOverlay);
+    els.achCloseBtn.addEventListener("click", () => els.achievementsOverlay.style.display = "none");
+
+    els.modeRow.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode, true));
+    });
+
+    els.leaderboardTabs.forEach(btn => {
+      btn.addEventListener("click", () => switchLeaderboardTab(btn.dataset.lbTab));
+    });
+
+    [els.nameOverlay, els.profileOverlay, els.achievementsOverlay, els.leaderboardOverlay, els.pauseOverlay].forEach(overlay => {
+      overlay.addEventListener("click", e => {
+        if (e.target !== overlay) return;
+        if (overlay === els.pauseOverlay) continueGame();
+        else overlay.style.display = "none";
+      });
+    });
+
+    window.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        if (els.pauseOverlay.style.display === "flex") continueGame();
+        else hideAllOverlays();
+      }
+      if (e.key.toLowerCase() === "p") {
+        if (state.running && !state.paused) pauseGame();
+        else if (state.paused) continueGame();
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && state.running && !state.paused) {
+        pauseGame();
+      }
+    });
+  }
+
+  function syncDailyModeAtStart() {
+    if (state.mode === "daily") {
+      resetDailyStoreIfNeeded();
+      state.dailyHue = getDailyHue(state.dailyDateKey);
+      applyDailyAccent();
+    }
+  }
+
+  function init() {
+    setThemeFromStorage();
+    loadProfiles();
+    loadBoards();
+    state.dailyDateKey = getLocalDateKey();
+    state.dailyHue = getDailyHue(state.dailyDateKey);
+    state.mode = "relaxed";
+    applyDailyAccent();
+    updateModeButtons();
+    syncPersonalBestsToUI();
+    updateTimerUI();
+    updateAccuracyUI();
+    updateLivesUI();
+    updateButtons();
+    attachEvents();
+    if (Object.keys(state.profiles.profiles).length > 1) {
+      showProfileOverlay();
+    }
+  }
+
+  window.setGameMode = setMode;
+  window.switchLbTab = switchLeaderboardTab;
+
+  init();
+})();
+</script>
+</body>
+</html>
