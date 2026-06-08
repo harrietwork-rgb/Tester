@@ -490,6 +490,13 @@ button {
 <div id="comboDisplay" class="combo-display">Combo x1</div>
 <div id="grid" class="grid"></div>
 
+<div class="mode-row">
+  <button class="ghost" onclick="setGameMode('relaxed')">Relaxed</button>
+  <button class="ghost" onclick="setGameMode('classic')">Classic</button>
+  <button class="ghost" onclick="setGameMode('extreme')">Extreme</button>
+  <button class="ghost" onclick="setGameMode('daily')">Daily</button>
+</div>
+  
   <div class="controls">
     <button id="pause-btn" class="ghost">Pause</button>
     <button id="restart-btn" class="ghost">Restart</button>
@@ -601,6 +608,9 @@ let paused = false;
 let feedbackActive = false;
 let oddIndex = -1;
 let lastClickTime = null;
+let gameMode = "classic";
+let dailyChallengeActive = false;
+let dailySeed = 1;
 let currentCombo = 0;
 let maxCombo = 0;
 let comboTimeout = null;
@@ -671,22 +681,6 @@ themeToggle.onclick = () => {
   themeToggle.textContent = isDark ? "☀️" : "🌙";
   localStorage.setItem("colourFocusTheme", isDark ? "dark" : "light");
 };
-
-  let dailySeed = 1;
-
-function setDailySeed() {
-  const today = new Date().toISOString().slice(0, 10);
-  dailySeed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-}
-
-function seededRandom() {
-  dailySeed = (dailySeed * 9301 + 49297) % 233280;
-  return dailySeed / 233280;
-}
-
-function gameRandom() {
-  return dailyChallengeActive ? seededRandom() : Math.random();
-}
 
 function createRandomUsername() {
   return `CF-${Math.floor(1000 + Math.random() * 9000)}`;
